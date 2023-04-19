@@ -4,15 +4,13 @@
 extern int yylex();
 void yyerror(char *msg);
 %}
-
 %union {
 float f;
 }
 %token <f> NUMB
 %type <f> E T F
-
 %%
-S : E { printf("%f\n", $1); br}
+S : E { printf("%f\n", $1); }
   ;
 
 E : T '+' E { $$ = $1 + $3; }
@@ -41,3 +39,4 @@ int main()
 yyparse();
 return 0;
 }
+

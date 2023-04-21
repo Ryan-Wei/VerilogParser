@@ -59,9 +59,9 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 7 "verilogParser.y"
+#line 9 "verilogParser.y"
 
-float f;
+  float f;
 
 #line 67 "y.tab.h"
 

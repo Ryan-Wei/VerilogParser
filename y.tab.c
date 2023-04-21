@@ -70,10 +70,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 extern int yylex();
 void yyerror(char *msg);
 
-#line 77 "y.tab.c"
+#line 78 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -131,11 +132,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 7 "verilogParser.y"
+#line 9 "verilogParser.y"
 
-float f;
+  float f;
 
-#line 139 "y.tab.c"
+#line 140 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -454,7 +455,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  10
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   18
+#define YYLAST   17
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  10
@@ -510,8 +511,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    13,    13,    16,    17,    18,    21,    22,    23,    26,
-      27,    28
+       0,    17,    17,    20,    21,    22,    25,    26,    27,    30,
+      31,    32
 };
 #endif
 
@@ -534,7 +535,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-7)
+#define YYPACT_NINF (-3)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -548,8 +549,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,    -7,    -1,    -1,     1,    -7,    11,    -7,    -7,    -6,
-      -7,    -1,    -1,    -1,    -1,    -7,    -7,    -7,    -7,    -7
+      -1,    -3,    -1,    -1,     3,     4,     7,    -3,    -3,     1,
+      -3,    -1,    -1,    -1,    -1,    -3,     7,     7,    -3,    -3
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -564,7 +565,7 @@ static const yytype_int8 yydefact[] =
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,     2,    -7,    -2
+      -3,    -3,    12,     5,    -2
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -578,14 +579,14 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       8,    10,     1,    15,     2,     9,     0,     3,     0,     0,
-       0,    18,    19,    16,    17,    11,    12,    13,    14
+       8,     0,     1,    10,     2,    11,    12,     3,    11,    12,
+      15,    18,    19,    13,    14,     9,    16,    17
 };
 
 static const yytype_int8 yycheck[] =
 {
-       2,     0,     3,     9,     5,     3,    -1,     8,    -1,    -1,
-      -1,    13,    14,    11,    12,     4,     5,     6,     7
+       2,    -1,     3,     0,     5,     4,     5,     8,     4,     5,
+       9,    13,    14,     6,     7,     3,    11,    12
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -593,7 +594,7 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     3,     5,     8,    11,    12,    13,    14,    14,    12,
-       0,     4,     5,     6,     7,     9,    12,    12,    14,    14
+       0,     4,     5,     6,     7,     9,    13,    13,    14,    14
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -1303,67 +1304,67 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 13 "verilogParser.y"
-      { printf("%f\n", (yyvsp[0].f)); }
-#line 1309 "y.tab.c"
+#line 17 "verilogParser.y"
+              { printf(" = %f\n", (yyvsp[0].f)); }
+#line 1310 "y.tab.c"
     break;
 
   case 3:
-#line 16 "verilogParser.y"
-            { (yyval.f) = (yyvsp[-2].f) + (yyvsp[0].f); }
-#line 1315 "y.tab.c"
+#line 20 "verilogParser.y"
+              { (yyval.f) = (yyvsp[-2].f) + (yyvsp[0].f); printf("001: %f\n", (yyval.f)); }
+#line 1316 "y.tab.c"
     break;
 
   case 4:
-#line 17 "verilogParser.y"
-            { (yyval.f) = (yyvsp[-2].f) - (yyvsp[0].f); }
-#line 1321 "y.tab.c"
+#line 21 "verilogParser.y"
+              { (yyval.f) = (yyvsp[-2].f) - (yyvsp[0].f); printf("002: %f\n", (yyval.f)); }
+#line 1322 "y.tab.c"
     break;
 
   case 5:
-#line 18 "verilogParser.y"
-      { (yyval.f) = (yyvsp[0].f); }
-#line 1327 "y.tab.c"
+#line 22 "verilogParser.y"
+              { (yyval.f) = (yyvsp[0].f);   printf("003: %f\n", (yyval.f)); }
+#line 1328 "y.tab.c"
     break;
 
   case 6:
-#line 21 "verilogParser.y"
-            { (yyval.f) = (yyvsp[-2].f) * (yyvsp[0].f); }
-#line 1333 "y.tab.c"
+#line 25 "verilogParser.y"
+              { (yyval.f) = (yyvsp[-2].f) * (yyvsp[0].f); printf("004: %f\n", (yyval.f)); }
+#line 1334 "y.tab.c"
     break;
 
   case 7:
-#line 22 "verilogParser.y"
-            { (yyval.f) = (yyvsp[-2].f) / (yyvsp[0].f); }
-#line 1339 "y.tab.c"
+#line 26 "verilogParser.y"
+              { (yyval.f) = (yyvsp[-2].f) / (yyvsp[0].f); printf("005: %f\n", (yyval.f)); }
+#line 1340 "y.tab.c"
     break;
 
   case 8:
-#line 23 "verilogParser.y"
-      { (yyval.f) = (yyvsp[0].f); }
-#line 1345 "y.tab.c"
+#line 27 "verilogParser.y"
+              { (yyval.f) = (yyvsp[0].f);  printf("006: %f\n", (yyval.f)); }
+#line 1346 "y.tab.c"
     break;
 
   case 9:
-#line 26 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-1].f); }
-#line 1351 "y.tab.c"
+#line 30 "verilogParser.y"
+              { (yyval.f) = (yyvsp[-1].f); printf("007: %f\n", (yyval.f)); }
+#line 1352 "y.tab.c"
     break;
 
   case 10:
-#line 27 "verilogParser.y"
-          { (yyval.f) = -(yyvsp[0].f); }
-#line 1357 "y.tab.c"
+#line 31 "verilogParser.y"
+              { (yyval.f) = -(yyvsp[0].f); printf("008: %f\n", (yyval.f)); }
+#line 1358 "y.tab.c"
     break;
 
   case 11:
-#line 28 "verilogParser.y"
-         { (yyval.f) = (yyvsp[0].f); }
-#line 1363 "y.tab.c"
+#line 32 "verilogParser.y"
+              { (yyval.f) = (yyvsp[0].f); printf("009: %f\n", (yyval.f)); }
+#line 1364 "y.tab.c"
     break;
 
 
-#line 1367 "y.tab.c"
+#line 1368 "y.tab.c"
 
       default: break;
     }
@@ -1595,17 +1596,18 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 30 "verilogParser.y"
+#line 34 "verilogParser.y"
 
 
 void yyerror(char *msg)
 {
   fprintf(stderr, "%s\n", msg);
+  exit (1);
 }
 
 int main()
 {
-yyparse();
-return 0;
+  yyparse();
+  return 0;
 }
 

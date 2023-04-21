@@ -377,7 +377,7 @@ static const YY_CHAR yy_ec[256] =
         1,    2,    1,    1,    1,    1,    1,    1,    1,    3,
         3,    3,    3,    1,    3,    4,    3,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    6,    1,
+        3,    1,    1,    1,    1,    1,    1,    1,    6,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -448,7 +448,7 @@ char *yytext;
 #line 2 "verilogParser.l"
 #include <stdio.h>
 #include <stdlib.h>
-#include "y.tab.h"
+#include "y.tab.h" // generated via yacc -d
 #line 453 "lex.yy.c"
 #line 454 "lex.yy.c"
 
@@ -730,7 +730,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 11 "verilogParser.l"
-{yylval.f =atof(yytext); return NUMB; }
+{yylval.f = atof(yytext); return NUMB;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP

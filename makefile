@@ -8,7 +8,12 @@ clean:
 build:
 	yacc -d verilogParser.y
 	lex verilogParser.l
-	gcc lex.yy.c y.tab.c -o parser
+	cc lex.yy.c y.tab.c -o parser -ll
 
 run:
 	./parser
+
+all:
+	make clean
+	make build
+	make run

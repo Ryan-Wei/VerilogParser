@@ -1311,55 +1311,55 @@ yyreduce:
 
   case 3:
 #line 20 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) + (yyvsp[0].f); printf("001: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[-2].f) + (yyvsp[0].f); }
 #line 1316 "y.tab.c"
     break;
 
   case 4:
 #line 21 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) - (yyvsp[0].f); printf("002: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[-2].f) - (yyvsp[0].f); }
 #line 1322 "y.tab.c"
     break;
 
   case 5:
 #line 22 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f);   printf("003: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[0].f); }
 #line 1328 "y.tab.c"
     break;
 
   case 6:
 #line 25 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) * (yyvsp[0].f); printf("004: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[-2].f) * (yyvsp[0].f); }
 #line 1334 "y.tab.c"
     break;
 
   case 7:
 #line 26 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) / (yyvsp[0].f); printf("005: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[-2].f) / (yyvsp[0].f); }
 #line 1340 "y.tab.c"
     break;
 
   case 8:
 #line 27 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f);  printf("006: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[0].f); }
 #line 1346 "y.tab.c"
     break;
 
   case 9:
 #line 30 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-1].f); printf("007: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[-1].f); }
 #line 1352 "y.tab.c"
     break;
 
   case 10:
 #line 31 "verilogParser.y"
-              { (yyval.f) = -(yyvsp[0].f); printf("008: %f\n", (yyval.f)); }
+              { (yyval.f) = -(yyvsp[0].f); }
 #line 1358 "y.tab.c"
     break;
 
   case 11:
 #line 32 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f); printf("009: %f\n", (yyval.f)); }
+              { (yyval.f) = (yyvsp[0].f); }
 #line 1364 "y.tab.c"
     break;
 

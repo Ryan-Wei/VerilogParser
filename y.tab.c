@@ -66,15 +66,17 @@
 
 
 /* First part of user prologue.  */
-#line 1 "verilogParser.y"
+#line 1 "src/verilogParser.y"
 
 #include <stdio.h>
 #include <stdlib.h>
+extern char* yytext;
+extern int yylval;
+extern FILE* yyin;
+int yylex();
+void yyerror(char const* s);
 
-extern int yylex();
-void yyerror(char *msg);
-
-#line 78 "y.tab.c"
+#line 80 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -122,24 +124,27 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUMB = 258
+    MODULE = 258,
+    INPUT = 259,
+    OUTPUT = 260,
+    WIRE = 261,
+    REG = 262,
+    IDENTIFIER = 263,
+    NUMBER = 264
   };
 #endif
 /* Tokens.  */
-#define NUMB 258
+#define MODULE 258
+#define INPUT 259
+#define OUTPUT 260
+#define WIRE 261
+#define REG 262
+#define IDENTIFIER 263
+#define NUMBER 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
-#line 9 "verilogParser.y"
-
-  float f;
-
-#line 140 "y.tab.c"
-
-};
-typedef union YYSTYPE YYSTYPE;
+typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -453,21 +458,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  10
+#define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   17
+#define YYLAST   19
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  10
+#define YYNTOKENS  14
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  11
+#define YYNRULES  10
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  20
+#define YYNSTATES  22
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   258
+#define YYMAXUTOK   264
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -483,7 +488,8 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       8,     9,     6,     4,     2,     5,     2,     7,     2,     2,
+      10,    11,     2,     2,    13,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    12,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -503,16 +509,16 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     1,     2,     3
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    17,    17,    20,    21,    22,    25,    26,    27,    30,
-      31,    32
+       0,    16,    16,    18,    19,    21,    22,    24,    25,    26,
+      27
 };
 #endif
 
@@ -521,8 +527,9 @@ static const yytype_int8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NUMB", "'+'", "'-'", "'*'", "'/'",
-  "'('", "')'", "$accept", "S", "E", "T", "F", YY_NULLPTR
+  "$end", "error", "$undefined", "MODULE", "INPUT", "OUTPUT", "WIRE",
+  "REG", "IDENTIFIER", "NUMBER", "'('", "')'", "';'", "','", "$accept",
+  "verilog_file", "module_declaration", "port_list", "port", YY_NULLPTR
 };
 #endif
 
@@ -531,11 +538,12 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,    43,    45,    42,    47,    40,    41
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+      40,    41,    59,    44
 };
 # endif
 
-#define YYPACT_NINF (-3)
+#define YYPACT_NINF (-7)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -549,8 +557,9 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,    -3,    -1,    -1,     3,     4,     7,    -3,    -3,     1,
-      -3,    -1,    -1,    -1,    -1,    -3,     7,     7,    -3,    -3
+       2,    -1,     9,    -7,    -6,    -7,    -4,    -7,     3,     4,
+       5,     6,    -3,    -7,    -7,    -7,    -7,    -7,     7,    -4,
+      -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -558,20 +567,21 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    11,     0,     0,     0,     2,     5,     8,    10,     0,
-       1,     0,     0,     0,     0,     9,     3,     4,     6,     7
+       0,     0,     0,     2,     0,     1,     0,     4,     0,     0,
+       0,     0,     0,     5,     7,     8,     9,    10,     0,     0,
+       3,     6
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -3,    -3,    12,     5,    -2
+      -7,    -7,    -7,    -7,    -2
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7
+      -1,     2,     3,    12,    13
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -579,36 +589,37 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       8,     0,     1,    10,     2,    11,    12,     3,    11,    12,
-      15,    18,    19,    13,    14,     9,    16,    17
+       8,     9,    10,    11,     6,     1,     7,     4,    18,     5,
+      19,    14,    15,    16,    17,     0,     0,    21,     0,    20
 };
 
 static const yytype_int8 yycheck[] =
 {
-       2,    -1,     3,     0,     5,     4,     5,     8,     4,     5,
-       9,    13,    14,     6,     7,     3,    11,    12
+       4,     5,     6,     7,    10,     3,    12,     8,    11,     0,
+      13,     8,     8,     8,     8,    -1,    -1,    19,    -1,    12
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     5,     8,    11,    12,    13,    14,    14,    12,
-       0,     4,     5,     6,     7,     9,    13,    13,    14,    14
+       0,     3,    15,    16,     8,     0,    10,    12,     4,     5,
+       6,     7,    17,    18,     8,     8,     8,     8,    11,    13,
+      12,    18
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    10,    11,    12,    12,    12,    13,    13,    13,    14,
-      14,    14
+       0,    14,    15,    16,    16,    17,    17,    18,    18,    18,
+      18
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     3,     3,     1,     3,     3,     1,     3,
-       2,     1
+       0,     2,     1,     6,     3,     1,     3,     2,     2,     2,
+       2
 };
 
 
@@ -1304,67 +1315,61 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 17 "verilogParser.y"
-              { printf(" = %f\n", (yyvsp[0].f)); }
-#line 1310 "y.tab.c"
+#line 16 "src/verilogParser.y"
+                                  { printf("Parsed a module declaration\n"); }
+#line 1321 "y.tab.c"
     break;
 
   case 3:
-#line 20 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) + (yyvsp[0].f); }
-#line 1316 "y.tab.c"
+#line 18 "src/verilogParser.y"
+                                                             { printf("Parsed a module declaration with port list\n"); }
+#line 1327 "y.tab.c"
     break;
 
   case 4:
-#line 21 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) - (yyvsp[0].f); }
-#line 1322 "y.tab.c"
+#line 19 "src/verilogParser.y"
+                                           { printf("Parsed a module declaration without port list\n"); }
+#line 1333 "y.tab.c"
     break;
 
   case 5:
-#line 22 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f); }
-#line 1328 "y.tab.c"
+#line 21 "src/verilogParser.y"
+                 { printf("Parsed a single port\n"); }
+#line 1339 "y.tab.c"
     break;
 
   case 6:
-#line 25 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) * (yyvsp[0].f); }
-#line 1334 "y.tab.c"
+#line 22 "src/verilogParser.y"
+                               { printf("Parsed a list of ports\n"); }
+#line 1345 "y.tab.c"
     break;
 
   case 7:
-#line 26 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-2].f) / (yyvsp[0].f); }
-#line 1340 "y.tab.c"
+#line 24 "src/verilogParser.y"
+                        { printf("Parsed an input port\n"); }
+#line 1351 "y.tab.c"
     break;
 
   case 8:
-#line 27 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f); }
-#line 1346 "y.tab.c"
+#line 25 "src/verilogParser.y"
+                         { printf("Parsed an output port\n"); }
+#line 1357 "y.tab.c"
     break;
 
   case 9:
-#line 30 "verilogParser.y"
-              { (yyval.f) = (yyvsp[-1].f); }
-#line 1352 "y.tab.c"
+#line 26 "src/verilogParser.y"
+                       { printf("Parsed a wire\n"); }
+#line 1363 "y.tab.c"
     break;
 
   case 10:
-#line 31 "verilogParser.y"
-              { (yyval.f) = -(yyvsp[0].f); }
-#line 1358 "y.tab.c"
-    break;
-
-  case 11:
-#line 32 "verilogParser.y"
-              { (yyval.f) = (yyvsp[0].f); }
-#line 1364 "y.tab.c"
+#line 27 "src/verilogParser.y"
+                      { printf("Parsed a register\n"); }
+#line 1369 "y.tab.c"
     break;
 
 
-#line 1368 "y.tab.c"
+#line 1373 "y.tab.c"
 
       default: break;
     }
@@ -1596,18 +1601,10 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 34 "verilogParser.y"
+#line 29 "src/verilogParser.y"
 
 
-void yyerror(char *msg)
-{
-  fprintf(stderr, "%s\n", msg);
-  exit (1);
+void yyerror(char const* s) {
+    printf("Error: %s\n", s);
+    exit(1);
 }
-
-int main()
-{
-  yyparse();
-  return 0;
-}
-

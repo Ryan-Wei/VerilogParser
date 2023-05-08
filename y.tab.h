@@ -49,24 +49,27 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUMB = 258
+    MODULE = 258,
+    INPUT = 259,
+    OUTPUT = 260,
+    WIRE = 261,
+    REG = 262,
+    IDENTIFIER = 263,
+    NUMBER = 264
   };
 #endif
 /* Tokens.  */
-#define NUMB 258
+#define MODULE 258
+#define INPUT 259
+#define OUTPUT 260
+#define WIRE 261
+#define REG 262
+#define IDENTIFIER 263
+#define NUMBER 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
-#line 9 "verilogParser.y"
-
-  float f;
-
-#line 67 "y.tab.h"
-
-};
-typedef union YYSTYPE YYSTYPE;
+typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

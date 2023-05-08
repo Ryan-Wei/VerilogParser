@@ -1,3 +1,8 @@
+all:
+	make clean
+	make build
+	make run
+
 clean:
 	if [ -f lex.yy.c ]; then rm lex.yy.c; fi
 	if [ -f y.tab.c ]; then rm y.tab.c; fi
@@ -6,14 +11,13 @@ clean:
 
 
 build:
-	yacc -d verilogParser.y
-	lex verilogParser.l
-	cc lex.yy.c y.tab.c -o parser -ll
+	yacc -d src/verilogParser.y
+	lex src/verilogParser.l
+	cc lex.yy.c y.tab.c -o verilogParser -ll
 
 run:
-	./parser
+	./verilogParser
 
-all:
-	make clean
-	make build
-	make run
+runtest:
+	./verilogParser test.v
+

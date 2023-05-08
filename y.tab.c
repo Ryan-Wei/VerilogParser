@@ -70,13 +70,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-extern char* yytext;
-extern int yylval;
-extern FILE* yyin;
-int yylex();
-void yyerror(char const* s);
 
-#line 80 "y.tab.c"
+extern int yylex();
+void yyerror(char *msg);
+
+#line 78 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -144,7 +142,16 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 9 "src/verilogParser.y"
+
+    char* strval;
+
+#line 152 "y.tab.c"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -517,8 +524,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    16,    16,    18,    19,    21,    22,    24,    25,    26,
-      27
+       0,    19,    19,    21,    22,    24,    25,    27,    28,    29,
+      30
 };
 #endif
 
@@ -1315,61 +1322,61 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 16 "src/verilogParser.y"
+#line 19 "src/verilogParser.y"
                                   { printf("Parsed a module declaration\n"); }
-#line 1321 "y.tab.c"
+#line 1328 "y.tab.c"
     break;
 
   case 3:
-#line 18 "src/verilogParser.y"
+#line 21 "src/verilogParser.y"
                                                              { printf("Parsed a module declaration with port list\n"); }
-#line 1327 "y.tab.c"
+#line 1334 "y.tab.c"
     break;
 
   case 4:
-#line 19 "src/verilogParser.y"
+#line 22 "src/verilogParser.y"
                                            { printf("Parsed a module declaration without port list\n"); }
-#line 1333 "y.tab.c"
+#line 1340 "y.tab.c"
     break;
 
   case 5:
-#line 21 "src/verilogParser.y"
+#line 24 "src/verilogParser.y"
                  { printf("Parsed a single port\n"); }
-#line 1339 "y.tab.c"
+#line 1346 "y.tab.c"
     break;
 
   case 6:
-#line 22 "src/verilogParser.y"
+#line 25 "src/verilogParser.y"
                                { printf("Parsed a list of ports\n"); }
-#line 1345 "y.tab.c"
+#line 1352 "y.tab.c"
     break;
 
   case 7:
-#line 24 "src/verilogParser.y"
+#line 27 "src/verilogParser.y"
                         { printf("Parsed an input port\n"); }
-#line 1351 "y.tab.c"
+#line 1358 "y.tab.c"
     break;
 
   case 8:
-#line 25 "src/verilogParser.y"
+#line 28 "src/verilogParser.y"
                          { printf("Parsed an output port\n"); }
-#line 1357 "y.tab.c"
+#line 1364 "y.tab.c"
     break;
 
   case 9:
-#line 26 "src/verilogParser.y"
+#line 29 "src/verilogParser.y"
                        { printf("Parsed a wire\n"); }
-#line 1363 "y.tab.c"
+#line 1370 "y.tab.c"
     break;
 
   case 10:
-#line 27 "src/verilogParser.y"
+#line 30 "src/verilogParser.y"
                       { printf("Parsed a register\n"); }
-#line 1369 "y.tab.c"
+#line 1376 "y.tab.c"
     break;
 
 
-#line 1373 "y.tab.c"
+#line 1380 "y.tab.c"
 
       default: break;
     }
@@ -1601,10 +1608,17 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 29 "src/verilogParser.y"
+#line 32 "src/verilogParser.y"
 
 
-void yyerror(char const* s) {
-    printf("Error: %s\n", s);
-    exit(1);
+void yyerror(char *msg)
+{
+  fprintf(stderr, "%s\n", msg);
+  exit (1);
+}
+
+int main (int argc, char** argv) 
+{
+    yyparse();
+    return 0;
 }

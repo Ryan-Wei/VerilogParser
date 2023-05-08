@@ -13,11 +13,11 @@ clean:
 build:
 	yacc -d src/verilogParser.y
 	lex src/verilogParser.l
-	cc lex.yy.c y.tab.c -o verilogParser -ll
+	cc lex.yy.c y.tab.c -o bin/verilogParser -ll
 
 run:
-	./verilogParser
+	./bin/verilogParser
 
 runtest:
-	./verilogParser test.v
+	./bin/verilogParser test.v
 

@@ -766,12 +766,12 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 11 "src/verilogParser.l"
-{ yylval = strdup(yytext); return IDENTIFIER; }
+{ yylval.strval = strdup(yytext); return IDENTIFIER; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 12 "src/verilogParser.l"
-{ yylval = atoi(yytext); return NUMBER; }
+{ yylval.strval = strdup(yytext); return NUMBER; }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */

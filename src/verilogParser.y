@@ -1,12 +1,15 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-extern char* yytext;
-extern int yylval;
-extern FILE* yyin;
-int yylex();
-void yyerror(char const* s);
+
+extern int yylex();
+void yyerror(char *msg);
 %}
+
+%union {
+    char* strval;
+}
+
 
 %token MODULE INPUT OUTPUT WIRE REG
 %token IDENTIFIER NUMBER
@@ -28,7 +31,14 @@ port : INPUT IDENTIFIER { printf("Parsed an input port\n"); }
 
 %%
 
-void yyerror(char const* s) {
-    printf("Error: %s\n", s);
-    exit(1);
+void yyerror(char *msg)
+{
+  fprintf(stderr, "%s\n", msg);
+  exit (1);
+}
+
+int main (int argc, char** argv) 
+{
+    yyparse();
+    return 0;
 }

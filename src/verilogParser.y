@@ -10,16 +10,21 @@ void yyerror(char *msg);
     char* strval;
 }
 
-
-%token MODULE INPUT OUTPUT WIRE REG
-%token IDENTIFIER NUMBER
+%token MODULE 
+%token ENDMODULE 
+%token INPUT 
+%token OUTPUT 
+%token WIRE 
+%token REG
+%token IDENTIFIER 
+%token NUMBER
 
 %%
 
 verilog_file : module_declaration { printf("Parsed a module declaration\n"); }
 
-module_declaration : MODULE IDENTIFIER '(' port_list ')' ';' { printf("Parsed a module declaration with port list\n"); }
-                   | MODULE IDENTIFIER ';' { printf("Parsed a module declaration without port list\n"); }
+module_declaration : MODULE IDENTIFIER '(' port_list ')' ';' ENDMODULE { printf("Parsed a module declaration with port list\n"); }
+                   | MODULE IDENTIFIER ';' ENDMODULE { printf("Parsed a module declaration without port list\n"); }
 
 port_list : port { printf("Parsed a single port\n"); }
           | port_list ',' port { printf("Parsed a list of ports\n"); }

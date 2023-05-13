@@ -50,22 +50,24 @@ extern int yydebug;
   enum yytokentype
   {
     MODULE = 258,
-    INPUT = 259,
-    OUTPUT = 260,
-    WIRE = 261,
-    REG = 262,
-    IDENTIFIER = 263,
-    NUMBER = 264
+    ENDMODULE = 259,
+    INPUT = 260,
+    OUTPUT = 261,
+    WIRE = 262,
+    REG = 263,
+    IDENTIFIER = 264,
+    NUMBER = 265
   };
 #endif
 /* Tokens.  */
 #define MODULE 258
-#define INPUT 259
-#define OUTPUT 260
-#define WIRE 261
-#define REG 262
-#define IDENTIFIER 263
-#define NUMBER 264
+#define ENDMODULE 259
+#define INPUT 260
+#define OUTPUT 261
+#define WIRE 262
+#define REG 263
+#define IDENTIFIER 264
+#define NUMBER 265
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -75,7 +77,7 @@ union YYSTYPE
 
     char* strval;
 
-#line 79 "y.tab.h"
+#line 81 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

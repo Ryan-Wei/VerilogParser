@@ -19,5 +19,5 @@ run:
 	./bin/verilogParser
 
 runtest:
-	./bin/verilogParser test.v
+	./bin/verilogParser < test.v
 

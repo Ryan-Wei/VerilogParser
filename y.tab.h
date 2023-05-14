@@ -73,11 +73,23 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 9 "src/verilogParser.y"
+#line 12 "src/verilogParser.y"
+
+    struct port_list_t 
+    {
+        struct port_t *ports;
+        int count;
+    } *port_list;
+
+    struct port_t 
+    {
+        char *name;
+        char *type;
+    } port;
 
     char* strval;
 
-#line 81 "y.tab.h"
+#line 93 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -787,12 +787,12 @@ case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
 #line 14 "src/verilogParser.l"
-{ }
+{ } /* ignore whitespace */
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 15 "src/verilogParser.l"
-{ printf("skipping a comment\n"); } /* ignore comments */
+{ } /* ignore comments */
 	YY_BREAK
 case 11:
 YY_RULE_SETUP

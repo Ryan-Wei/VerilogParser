@@ -188,43 +188,57 @@ static void print_json_indent(int depth);
 static bool first_item = true;
 static int json_depth = 0;
 
-static void print_json_object_start(int depth) {
-    if (!first_item) {
-        putchar(',');
-    }
-    first_item = false;
-    print_json_indent(depth);
+static void print_json_object_start(int depth) 
+{
+    putchar('\n');
+    print_json_indent(depth - 1); 
     putchar('{');
+    //putchar('\n');
+    //print_json_indent(depth);
+    //if (!first_item) 
+    //{
+    //    putchar(',');
+    //}
+    first_item = true;
+ 
 }
 
-static void print_json_object_end(int depth) {
+static void print_json_object_end(int depth) 
+{
     putchar('\n');
     print_json_indent(depth);
     putchar('}');
 }
 
-static void print_json_indent(int depth) {
-    putchar('\n');
-    for (int i = 0; i < depth; i++) {
+static void print_json_indent(int depth) 
+{
+    for (int i = 0; i < depth; i++) 
+    {
         putchar('\t');
     }
 }
 
-static void print_json_key_value(const char *key, const char *value, int depth) {
-    if (!first_item) {
+static void print_json_key_value(const char *key, const char *value, int depth) 
+{
+    if (!first_item) 
+    {
         putchar(',');
     }
     first_item = false;
+    putchar('\n');
     print_json_indent(depth);
     print_json_string(key);
     putchar(':');
     print_json_string(value);
 }
 
-static void print_json_string(const char *str) {
+static void print_json_string(const char *str) 
+{
     putchar('"');
-    for (const char *p = str; *p; p++) {
-        switch (*p) {
+    for (const char *p = str; *p; p++) 
+    {
+        switch (*p) 
+        {
             case '"': printf("\\\""); break;
             case '\\': printf("\\\\"); break;
             case '/': printf("\\/"); break;
@@ -239,33 +253,39 @@ static void print_json_string(const char *str) {
     putchar('"');
 }
 
-static void json_start_object(const char *key) {
-    print_json_key_value(key, "", json_depth++);
+static void json_start_object(const char *key, const char *value) 
+{
+    print_json_key_value(key, value, json_depth++);
     print_json_object_start(json_depth);
 }
 
-static void json_end_object() {
+static void json_end_object() 
+{
     print_json_object_end(--json_depth);
 }
 
-static void json_add_string(const char *key, const char *value) {
+static void json_add_string(const char *key, const char *value) 
+{
     print_json_key_value(key, value, json_depth);
 }
 
-static void json_add_number(const char *key, const char *value) {
+static void json_add_number(const char *key, const char *value) 
+{
     print_json_key_value(key, value, json_depth);
 }
 
-static void json_add_boolean(const char *key, bool value) {
+static void json_add_boolean(const char *key, bool value) 
+{
     print_json_key_value(key, value ? "true" : "false", json_depth);
 }
 
-static void json_add_null(const char *key) {
+static void json_add_null(const char *key) 
+{
     print_json_key_value(key, "null", json_depth);
 }
 
 
-#line 269 "y.tab.c"
+#line 289 "y.tab.c"
 
 
 #ifdef short
@@ -568,18 +588,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  5
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
 #define YYLAST   19
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  15
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  5
+#define YYNNTS  6
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  9
+#define YYNRULES  11
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  22
+#define YYNSTATES  24
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   265
@@ -627,7 +647,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   131,   131,   133,   148,   155,   163,   168,   173,   178
+       0,   151,   151,   156,   157,   160,   177,   184,   192,   197,
+     202,   207
 };
 #endif
 
@@ -638,8 +659,8 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "MODULE", "ENDMODULE", "INPUT", "OUTPUT",
   "WIRE", "REG", "IDENTIFIER", "NUMBER", "'('", "')'", "';'", "','",
-  "$accept", "verilog_file", "module_declaration", "port_list",
-  "port_declaration", YY_NULLPTR
+  "$accept", "verilog_file", "module_declaration_list",
+  "module_declaration", "port_list", "port_declaration", YY_NULLPTR
 };
 #endif
 
@@ -667,9 +688,9 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       2,    -2,     8,    -9,    -1,    -9,    -5,     0,     3,     4,
-       5,    -8,    -9,    -9,    -9,    -9,    -9,     6,    -5,     7,
-      -9,    -9
+       2,    -2,     8,     2,    -9,    -1,    -9,    -9,    -5,     0,
+       3,     4,     5,    -8,    -9,    -9,    -9,    -9,    -9,     6,
+      -5,     7,    -9,    -9
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -677,21 +698,21 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     2,     0,     1,     0,     0,     0,     0,
-       0,     0,     4,     6,     7,     8,     9,     0,     0,     0,
-       5,     3
+       0,     0,     0,     2,     3,     0,     1,     4,     0,     0,
+       0,     0,     0,     0,     6,     8,     9,    10,    11,     0,
+       0,     0,     7,     5
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -9,    -9,    -9,    -9,    -3
+      -9,    -9,    -9,    12,    -9,    -4
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,    11,    12
+      -1,     2,     3,     4,    13,    14
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -699,35 +720,37 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       7,     8,     9,    10,    17,     1,    18,     4,     5,    13,
-       6,    21,    14,    15,    16,    20,     0,     0,     0,    19
+       9,    10,    11,    12,    19,     1,    20,     5,     6,    15,
+       8,    23,    16,    17,    18,     7,    22,     0,     0,    21
 };
 
 static const yytype_int8 yycheck[] =
 {
        5,     6,     7,     8,    12,     3,    14,     9,     0,     9,
-      11,     4,     9,     9,     9,    18,    -1,    -1,    -1,    13
+      11,     4,     9,     9,     9,     3,    20,    -1,    -1,    13
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    16,    17,     9,     0,    11,     5,     6,     7,
-       8,    18,    19,     9,     9,     9,     9,    12,    14,    13,
-      19,     4
+       0,     3,    16,    17,    18,     9,     0,    18,    11,     5,
+       6,     7,     8,    19,    20,     9,     9,     9,     9,    12,
+      14,    13,    20,     4
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    15,    16,    17,    18,    18,    19,    19,    19,    19
+       0,    15,    16,    17,    17,    18,    19,    19,    20,    20,
+      20,    20
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     7,     1,     3,     2,     2,     2,     2
+       0,     2,     1,     1,     2,     7,     1,     3,     2,     2,
+       2,     2
 };
 
 
@@ -1423,89 +1446,99 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 131 "src/verilogParser.y"
-                                  { json_end_object(); }
-#line 1429 "y.tab.c"
-    break;
-
-  case 3:
-#line 134 "src/verilogParser.y"
-                   {
-                       json_start_object("module");
-                       json_add_string("name", (yyvsp[-5].strval));
-                       json_start_object("ports");
-                       for (int i = 0; i < (yyvsp[-3].port_list) -> count; i++) 
-                       {
-                           json_start_object((yyvsp[-3].port_list) -> ports[i].name);
-                           json_add_string("type", (yyvsp[-3].port_list) -> ports[i].type);
-                           json_end_object();
-                       }
-                       json_end_object();
-                       json_end_object();
-                   }
-#line 1447 "y.tab.c"
+#line 152 "src/verilogParser.y"
+                {
+                    json_end_object();
+                }
+#line 1454 "y.tab.c"
     break;
 
   case 4:
-#line 149 "src/verilogParser.y"
+#line 157 "src/verilogParser.y"
+                                                                         { }
+#line 1460 "y.tab.c"
+    break;
+
+  case 5:
+#line 161 "src/verilogParser.y"
+                    {
+                        json_start_object("module", (yyvsp[-5].strval));
+                        //json_add_string("name", $2);
+                        json_start_object("ports", "port_list");
+                        for (int i = 0; i < (yyvsp[-3].port_list) -> count; i++) 
+                        {
+                            json_start_object("port", "port_declaration");
+                            //json_add_string("tag", "port_declaration");
+                            json_add_string("name", (yyvsp[-3].port_list) -> ports[i].name);
+                            json_add_string("type", (yyvsp[-3].port_list) -> ports[i].type);
+                            json_end_object();
+                        }
+                        json_end_object();
+                        json_end_object();
+                     }
+#line 1480 "y.tab.c"
+    break;
+
+  case 6:
+#line 178 "src/verilogParser.y"
             {
                 (yyval.port_list) = (struct port_list_t *)malloc(sizeof(struct port_list_t));
                 (yyval.port_list) -> ports = (struct port_t *)malloc(sizeof(struct port_t));
                 (yyval.port_list) -> ports[0] = (yyvsp[0].port);
                 (yyval.port_list) -> count = 1;
             }
-#line 1458 "y.tab.c"
+#line 1491 "y.tab.c"
     break;
 
-  case 5:
-#line 156 "src/verilogParser.y"
+  case 7:
+#line 185 "src/verilogParser.y"
             {
                 (yyval.port_list) = (yyvsp[-2].port_list);
                 (yyval.port_list) -> ports = (struct port_t *)realloc((yyval.port_list) -> ports, sizeof(struct port_t) * ((yyvsp[-2].port_list) -> count + 1));
                 (yyval.port_list) -> ports[(yyvsp[-2].port_list) -> count] = (yyvsp[0].port);
                 (yyval.port_list) -> count = (yyvsp[-2].port_list) -> count + 1;
             }
-#line 1469 "y.tab.c"
+#line 1502 "y.tab.c"
     break;
 
-  case 6:
-#line 164 "src/verilogParser.y"
+  case 8:
+#line 193 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "input";
                     }
-#line 1478 "y.tab.c"
+#line 1511 "y.tab.c"
     break;
 
-  case 7:
-#line 169 "src/verilogParser.y"
+  case 9:
+#line 198 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "output";
                     }
-#line 1487 "y.tab.c"
+#line 1520 "y.tab.c"
     break;
 
-  case 8:
-#line 174 "src/verilogParser.y"
+  case 10:
+#line 203 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "wire";
                     }
-#line 1496 "y.tab.c"
+#line 1529 "y.tab.c"
     break;
 
-  case 9:
-#line 179 "src/verilogParser.y"
+  case 11:
+#line 208 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "reg";
                     }
-#line 1505 "y.tab.c"
+#line 1538 "y.tab.c"
     break;
 
 
-#line 1509 "y.tab.c"
+#line 1542 "y.tab.c"
 
       default: break;
     }
@@ -1737,7 +1770,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 185 "src/verilogParser.y"
+#line 214 "src/verilogParser.y"
 
 
 void yyerror(const char *msg)
@@ -1748,6 +1781,7 @@ void yyerror(const char *msg)
 
 int main (int argc, char** argv) 
 {
+    json_start_object("parsing from...", *argv);
     yyparse();
     return 0;
 }

@@ -47,43 +47,57 @@ static void print_json_indent(int depth);
 static bool first_item = true;
 static int json_depth = 0;
 
-static void print_json_object_start(int depth) {
-    if (!first_item) {
-        putchar(',');
-    }
-    first_item = false;
-    print_json_indent(depth);
+static void print_json_object_start(int depth) 
+{
+    putchar('\n');
+    print_json_indent(depth - 1); 
     putchar('{');
+    //putchar('\n');
+    //print_json_indent(depth);
+    //if (!first_item) 
+    //{
+    //    putchar(',');
+    //}
+    first_item = true;
+ 
 }
 
-static void print_json_object_end(int depth) {
+static void print_json_object_end(int depth) 
+{
     putchar('\n');
     print_json_indent(depth);
     putchar('}');
 }
 
-static void print_json_indent(int depth) {
-    putchar('\n');
-    for (int i = 0; i < depth; i++) {
+static void print_json_indent(int depth) 
+{
+    for (int i = 0; i < depth; i++) 
+    {
         putchar('\t');
     }
 }
 
-static void print_json_key_value(const char *key, const char *value, int depth) {
-    if (!first_item) {
+static void print_json_key_value(const char *key, const char *value, int depth) 
+{
+    if (!first_item) 
+    {
         putchar(',');
     }
     first_item = false;
+    putchar('\n');
     print_json_indent(depth);
     print_json_string(key);
     putchar(':');
     print_json_string(value);
 }
 
-static void print_json_string(const char *str) {
+static void print_json_string(const char *str) 
+{
     putchar('"');
-    for (const char *p = str; *p; p++) {
-        switch (*p) {
+    for (const char *p = str; *p; p++) 
+    {
+        switch (*p) 
+        {
             case '"': printf("\\\""); break;
             case '\\': printf("\\\\"); break;
             case '/': printf("\\/"); break;
@@ -98,28 +112,34 @@ static void print_json_string(const char *str) {
     putchar('"');
 }
 
-static void json_start_object(const char *key) {
-    print_json_key_value(key, "", json_depth++);
+static void json_start_object(const char *key, const char *value) 
+{
+    print_json_key_value(key, value, json_depth++);
     print_json_object_start(json_depth);
 }
 
-static void json_end_object() {
+static void json_end_object() 
+{
     print_json_object_end(--json_depth);
 }
 
-static void json_add_string(const char *key, const char *value) {
+static void json_add_string(const char *key, const char *value) 
+{
     print_json_key_value(key, value, json_depth);
 }
 
-static void json_add_number(const char *key, const char *value) {
+static void json_add_number(const char *key, const char *value) 
+{
     print_json_key_value(key, value, json_depth);
 }
 
-static void json_add_boolean(const char *key, bool value) {
+static void json_add_boolean(const char *key, bool value) 
+{
     print_json_key_value(key, value ? "true" : "false", json_depth);
 }
 
-static void json_add_null(const char *key) {
+static void json_add_null(const char *key) 
+{
     print_json_key_value(key, "null", json_depth);
 }
 
@@ -128,22 +148,31 @@ static void json_add_null(const char *key) {
 
 
 %%
-verilog_file : module_declaration { json_end_object(); }
+verilog_file    : module_declaration_list
+                {
+                    json_end_object();
+                }
 
-module_declaration : MODULE IDENTIFIER '(' port_list ')' ';' ENDMODULE 
-                   {
-                       json_start_object("module");
-                       json_add_string("name", $2);
-                       json_start_object("ports");
-                       for (int i = 0; i < $4 -> count; i++) 
-                       {
-                           json_start_object($4 -> ports[i].name);
-                           json_add_string("type", $4 -> ports[i].type);
-                           json_end_object();
-                       }
-                       json_end_object();
-                       json_end_object();
-                   }
+module_declaration_list     : module_declaration
+                            | module_declaration_list module_declaration { }
+
+
+module_declaration  : MODULE IDENTIFIER '(' port_list ')' ';' ENDMODULE 
+                    {
+                        json_start_object("module", $2);
+                        //json_add_string("name", $2);
+                        json_start_object("ports", "port_list");
+                        for (int i = 0; i < $4 -> count; i++) 
+                        {
+                            json_start_object("port", "port_declaration");
+                            //json_add_string("tag", "port_declaration");
+                            json_add_string("name", $4 -> ports[i].name);
+                            json_add_string("type", $4 -> ports[i].type);
+                            json_end_object();
+                        }
+                        json_end_object();
+                        json_end_object();
+                     }
 
 port_list   : port_declaration 
             {
@@ -192,6 +221,7 @@ void yyerror(const char *msg)
 
 int main (int argc, char** argv) 
 {
+    json_start_object("parsing from...", *argv);
     yyparse();
     return 0;
 }

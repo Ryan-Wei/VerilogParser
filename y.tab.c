@@ -210,6 +210,8 @@ union YYSTYPE
         struct statement_t *tail;
         char *expression;
         int flag;
+        char *type;
+        char *condition;
     } *statement;
 
     struct caseItemList_t 
@@ -228,7 +230,7 @@ union YYSTYPE
     int intval;
 
 
-#line 232 "y.tab.c"
+#line 234 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -244,7 +246,7 @@ int yyparse (void);
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
 
 /* Second part of user prologue.  */
-#line 131 "src/verilogParser.y"
+#line 133 "src/verilogParser.y"
 
 
 static void print_json_string(const char *str);
@@ -351,21 +353,26 @@ static void print_statement(struct statement_t *p)
 
     if (p -> flag) 
     {
+
         json_add_string("expression", p -> expression);
         print_statement(p -> tail);
     }
     else 
     {
-        json_start_object("statement", "statement_block");
+        json_start_object("statement", p -> type);
+            if (p -> condition) 
+            {
+                json_add_string("condition", p -> condition);
+            }
             print_statement(p -> head);
         json_end_object();
+        print_statement(p -> tail);
     }
 }
 
 
 
-
-#line 369 "y.tab.c"
+#line 376 "y.tab.c"
 
 
 #ifdef short
@@ -670,16 +677,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   76
+#define YYLAST   231
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  27
+#define YYNTOKENS  41
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  31
+#define YYNRULES  57
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  79
+#define YYNSTATES  125
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   273
@@ -697,16 +704,16 @@ static const yytype_int8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      19,    20,     2,     2,    22,     2,     2,     2,     2,     2,
+       2,     2,     2,    39,     2,     2,     2,    31,    32,     2,
+      19,    20,    29,    27,    22,    28,     2,    30,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,    24,    21,
-       2,     2,     2,     2,    26,     2,     2,     2,     2,     2,
+      36,    38,    37,    40,    26,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    23,     2,    25,     2,     2,     2,     2,     2,     2,
+       2,    23,     2,    25,    34,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    33,     2,    35,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -728,10 +735,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   255,   255,   261,   262,   265,   316,   323,   331,   338,
-     346,   352,   358,   364,   370,   376,   382,   388,   394,   400,
-     408,   414,   422,   429,   439,   446,   451,   455,   466,   474,
-     499,   503
+       0,   262,   262,   268,   269,   272,   323,   330,   338,   345,
+     353,   359,   365,   371,   377,   383,   389,   395,   401,   407,
+     415,   421,   429,   436,   446,   453,   458,   462,   473,   483,
+     493,   503,   534,   538,   544,   545,   546,   547,   548,   549,
+     550,   551,   552,   553,   554,   555,   556,   557,   558,   559,
+     560,   561,   562,   563,   569,   573,   579,   585
 };
 #endif
 
@@ -743,11 +752,12 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "MODULE", "ENDMODULE", "INPUT", "OUTPUT",
   "WIRE", "REG", "IDENTIFIER", "NUMBER", "BEGIN_TOKEN", "END_TOKEN",
   "ALWAYS", "IF", "ELSE", "CASE", "DEFAULT", "ASSIGN", "'('", "')'", "';'",
-  "','", "'['", "':'", "']'", "'@'", "$accept", "verilog_file",
-  "module_declaration_list", "module_declaration", "port_list",
-  "internal_port_list", "port_declaration", "module_body", "always_list",
-  "always_block", "statement_block", "statement_list", "statement",
-  "expression", YY_NULLPTR
+  "','", "'['", "':'", "']'", "'@'", "'+'", "'-'", "'*'", "'/'", "'%'",
+  "'&'", "'|'", "'^'", "'~'", "'<'", "'>'", "'='", "'!'", "'?'", "$accept",
+  "verilog_file", "module_declaration_list", "module_declaration",
+  "port_list", "internal_port_list", "port_declaration", "module_body",
+  "always_list", "always_block", "statement_block", "statement_list",
+  "statement", "expression", YY_NULLPTR
 };
 #endif
 
@@ -758,11 +768,13 @@ static const yytype_int16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,    40,
-      41,    59,    44,    91,    58,    93,    64
+      41,    59,    44,    91,    58,    93,    64,    43,    45,    42,
+      47,    37,    38,   124,    94,   126,    60,    62,    61,    33,
+      63
 };
 # endif
 
-#define YYPACT_NINF (-22)
+#define YYPACT_NINF (-66)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -774,16 +786,21 @@ static const yytype_int16 yytoknum[] =
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-static const yytype_int8 yypact[] =
+static const yytype_int16 yypact[] =
 {
-      30,    -5,    35,    30,   -22,    17,   -22,   -22,     1,    -9,
-      -8,    -7,    -6,    16,    12,   -22,   -22,    27,   -22,    28,
-     -22,    31,   -22,    32,    33,    23,     1,    21,    22,    24,
-      25,    26,     1,   -22,    37,    41,    42,    43,    44,    14,
-      34,    36,    38,    39,    40,    45,    46,    47,    48,    49,
-     -22,   -22,   -22,    50,    51,    52,    57,   -22,    53,   -22,
-     -22,   -22,   -22,   -22,   -22,     3,   -22,   -22,    54,    56,
-      15,   -22,   -22,    19,   -22,    55,   -22,   -22,   -22
+      -2,    -4,     6,    -2,   -66,     4,   -66,   -66,   180,   169,
+     171,   172,   173,     1,   -18,   -66,   -66,    16,   -66,    17,
+     -66,    18,   -66,    34,    39,    45,   180,    41,    46,    62,
+      65,    66,   180,   -66,    58,    59,    78,    98,   115,   210,
+     105,   138,   119,   135,   137,   154,   177,   157,   140,   194,
+     -66,   -66,   -66,   203,   204,   212,   213,   -66,   205,   -66,
+     -66,   -66,   -66,   -66,   -66,   201,   -66,   -66,   201,     2,
+      23,   214,   201,   201,   201,   201,   201,   201,   201,   201,
+     201,   201,   201,   201,   201,   201,   201,   -66,   195,   -66,
+      82,   136,   136,   136,   136,   136,   136,   136,   136,   136,
+     136,   136,   136,   136,   100,   207,   -66,   189,   -66,    64,
+     201,   -66,   201,   201,   -66,   -66,   -66,   118,   136,    44,
+     -66,   195,   215,   195,   -66
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -797,22 +814,27 @@ static const yytype_int8 yydefact[] =
        0,     0,     0,     7,     0,     0,     0,     0,     0,    21,
        0,     0,     0,     0,     0,     0,     0,     0,     0,    20,
       22,     8,     5,     0,     0,     0,     0,    19,     0,     9,
-      23,    14,    15,    16,    17,     0,    30,    31,     0,     0,
-       0,    24,    29,     0,    26,     0,    25,    27,    28
+      23,    14,    15,    16,    17,     0,    32,    33,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    54,     0,    24,
+       0,    34,    35,    36,    37,    38,    39,    40,    41,    42,
+      43,    44,    48,    49,     0,     0,    29,     0,    26,     0,
+       0,    56,     0,     0,    25,    27,    28,     0,    55,     0,
+      57,     0,    30,     0,    31
 };
 
   /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int8 yypgoto[] =
+static const yytype_int16 yypgoto[] =
 {
-     -22,   -22,   -22,    65,   -22,   -22,   -21,   -22,   -22,     7,
-     -12,   -22,   -15,    10
+     -66,   -66,   -66,   224,   -66,   -66,   158,   -66,   -66,   179,
+     160,   -66,    70,   -65
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
       -1,     2,     3,     4,    14,    39,    15,    41,    49,    50,
-      72,    73,    74,    75
+     106,   107,   108,   109
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -820,49 +842,88 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      16,    18,    20,    22,     5,    33,     9,    10,    11,    12,
-      13,    40,    66,    67,    17,    19,    21,    23,    48,     9,
-      10,    11,    12,    13,    66,    67,    70,    47,    66,    67,
-      70,    76,    25,     1,    26,     6,     8,    27,    28,    24,
-      52,    29,    30,    31,    32,    34,    35,    42,    36,    37,
-      38,    43,    44,    45,    46,    51,    60,    71,    77,    61,
-      62,    63,    47,    53,    54,    55,    64,    70,     7,    59,
-      56,    57,    65,    58,    69,    68,    78
+      69,     1,    25,    70,    26,     5,     6,    90,    91,    92,
+      93,    94,    95,    96,    97,    98,    99,   100,   101,   102,
+     103,   104,    71,     8,    24,    72,    27,    28,    29,    73,
+      74,    75,    76,    77,    78,    79,    80,    81,    82,    83,
+      84,    85,    86,    87,    30,   117,    72,   118,   119,    31,
+      73,    74,    75,    76,    77,    78,    79,    80,    81,    82,
+      83,    84,    85,    86,   121,    34,    32,    72,    42,    43,
+      35,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,    84,    85,    86,   116,    36,    72,    44,    37,
+      38,    73,    74,    75,    76,    77,    78,    79,    80,    81,
+      82,    83,    84,    85,    86,    72,   110,   111,    45,    73,
+      74,    75,    76,    77,    78,    79,    80,    81,    82,    83,
+      84,    85,    86,    72,   112,    46,    51,    73,    74,    75,
+      76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
+      86,    72,    52,   120,    53,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    84,    85,    86,    72,
+      54,    59,    55,    73,    74,    75,    76,    77,    78,    79,
+      80,    81,    82,    83,    84,    85,    86,   115,    16,    56,
+      18,    20,    22,    58,    33,     9,    10,    11,    12,    13,
+      40,   122,    17,   124,    19,    21,    23,    48,    66,    67,
+      88,   114,    57,   105,    66,    67,    88,    47,    68,   105,
+      66,    67,    61,    62,    68,     9,    10,    11,    12,    13,
+      68,    63,    64,    47,    65,    88,   113,     7,    60,     0,
+     123,    89
 };
 
 static const yytype_int8 yycheck[] =
 {
-       9,     9,     9,     9,     9,    26,     5,     6,     7,     8,
-       9,    32,     9,    10,    23,    23,    23,    23,    39,     5,
-       6,     7,     8,     9,     9,    10,    11,    13,     9,    10,
-      11,    12,    20,     3,    22,     0,    19,    10,    10,    23,
-       4,    10,    10,    10,    21,    24,    24,    10,    24,    24,
-      24,    10,    10,    10,    10,    21,    49,    69,    73,     9,
-       9,     9,    13,    25,    25,    25,     9,    11,     3,    21,
-      25,    25,    19,    26,    20,    65,    21
+      65,     3,    20,    68,    22,     9,     0,    72,    73,    74,
+      75,    76,    77,    78,    79,    80,    81,    82,    83,    84,
+      85,    86,    20,    19,    23,    23,    10,    10,    10,    27,
+      28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
+      38,    39,    40,    20,    10,   110,    23,   112,   113,    10,
+      27,    28,    29,    30,    31,    32,    33,    34,    35,    36,
+      37,    38,    39,    40,    20,    24,    21,    23,    10,    10,
+      24,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+      36,    37,    38,    39,    40,    21,    24,    23,    10,    24,
+      24,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+      36,    37,    38,    39,    40,    23,    24,    25,    10,    27,
+      28,    29,    30,    31,    32,    33,    34,    35,    36,    37,
+      38,    39,    40,    23,    24,    10,    21,    27,    28,    29,
+      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
+      40,    23,     4,    25,    25,    27,    28,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    23,
+      25,    21,    25,    27,    28,    29,    30,    31,    32,    33,
+      34,    35,    36,    37,    38,    39,    40,   107,     9,    25,
+       9,     9,     9,    26,    26,     5,     6,     7,     8,     9,
+      32,   121,    23,   123,    23,    23,    23,    39,     9,    10,
+      11,    12,    25,    14,     9,    10,    11,    13,    19,    14,
+       9,    10,     9,     9,    19,     5,     6,     7,     8,     9,
+      19,     9,     9,    13,    19,    11,    19,     3,    49,    -1,
+      15,    71
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    28,    29,    30,     9,     0,    30,    19,     5,
-       6,     7,     8,     9,    31,    33,     9,    23,     9,    23,
+       0,     3,    42,    43,    44,     9,     0,    44,    19,     5,
+       6,     7,     8,     9,    45,    47,     9,    23,     9,    23,
        9,    23,     9,    23,    23,    20,    22,    10,    10,    10,
-      10,    10,    21,    33,    24,    24,    24,    24,    24,    32,
-      33,    34,    10,    10,    10,    10,    10,    13,    33,    35,
-      36,    21,     4,    25,    25,    25,    25,    25,    26,    21,
-      36,     9,     9,     9,     9,    19,     9,    10,    40,    20,
-      11,    37,    37,    38,    39,    40,    12,    39,    21
+      10,    10,    21,    47,    24,    24,    24,    24,    24,    46,
+      47,    48,    10,    10,    10,    10,    10,    13,    47,    49,
+      50,    21,     4,    25,    25,    25,    25,    25,    26,    21,
+      50,     9,     9,     9,     9,    19,     9,    10,    19,    54,
+      54,    20,    23,    27,    28,    29,    30,    31,    32,    33,
+      34,    35,    36,    37,    38,    39,    40,    20,    11,    51,
+      54,    54,    54,    54,    54,    54,    54,    54,    54,    54,
+      54,    54,    54,    54,    54,    14,    51,    52,    53,    54,
+      24,    25,    24,    19,    12,    53,    21,    54,    54,    54,
+      25,    20,    53,    15,    53
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    27,    28,    29,    29,    30,    31,    31,    32,    32,
-      33,    33,    33,    33,    33,    33,    33,    33,    33,    33,
-      34,    34,    35,    35,    36,    37,    38,    38,    39,    39,
-      40,    40
+       0,    41,    42,    43,    43,    44,    45,    45,    46,    46,
+      47,    47,    47,    47,    47,    47,    47,    47,    47,    47,
+      48,    48,    49,    49,    50,    51,    52,    52,    53,    53,
+      53,    53,    54,    54,    54,    54,    54,    54,    54,    54,
+      54,    54,    54,    54,    54,    54,    54,    54,    54,    54,
+      54,    54,    54,    54,    54,    54,    54,    54
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -871,7 +932,9 @@ static const yytype_int8 yyr2[] =
        0,     2,     1,     1,     2,     8,     1,     3,     2,     3,
        2,     2,     2,     2,     7,     7,     7,     7,     1,     6,
        2,     1,     1,     2,     6,     3,     1,     2,     2,     1,
-       1,     1
+       5,     7,     1,     1,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     5,     4,     6
 };
 
 
@@ -1567,22 +1630,22 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 256 "src/verilogParser.y"
+#line 263 "src/verilogParser.y"
                 {
                     // started by main()
                     json_end_object(); // end parsing from
                 }
-#line 1576 "y.tab.c"
+#line 1639 "y.tab.c"
     break;
 
   case 4:
-#line 262 "src/verilogParser.y"
+#line 269 "src/verilogParser.y"
                                                                          { }
-#line 1582 "y.tab.c"
+#line 1645 "y.tab.c"
     break;
 
   case 5:
-#line 266 "src/verilogParser.y"
+#line 273 "src/verilogParser.y"
                     {
                         json_start_object("module", (yyvsp[-6].strval));
                             //json_add_string("name", $2);
@@ -1622,7 +1685,7 @@ yyreduce:
                                         {
                                             json_start_object("always_block", "always_definition");
                                                 json_add_string("condition", (yyvsp[-1].module_body) -> always_list -> always_block[i].condition);
-                                                json_start_object("statement", "statement_block");
+                                                json_start_object("statement", (yyvsp[-1].module_body) -> always_list -> always_block[i].statement -> type);
                                                     print_statement((yyvsp[-1].module_body) -> always_list -> always_block[i].statement);
                                                 json_end_object(); // end statement block
                                             json_end_object();
@@ -1632,222 +1695,222 @@ yyreduce:
                             json_end_object(); // end module body
                         json_end_object(); // end module
                      }
-#line 1636 "y.tab.c"
+#line 1699 "y.tab.c"
     break;
 
   case 6:
-#line 317 "src/verilogParser.y"
+#line 324 "src/verilogParser.y"
                     {
                         (yyval.port_list) = (struct port_list_t *)malloc(sizeof(struct port_list_t));
                         (yyval.port_list) -> ports = (struct port_t *)malloc(sizeof(struct port_t));
                         (yyval.port_list) -> ports[0] = (yyvsp[0].port);
                         (yyval.port_list) -> count = 1;
                     }
-#line 1647 "y.tab.c"
+#line 1710 "y.tab.c"
     break;
 
   case 7:
-#line 324 "src/verilogParser.y"
+#line 331 "src/verilogParser.y"
                     {
                         (yyval.port_list) = (yyvsp[-2].port_list);
                         (yyval.port_list) -> ports = (struct port_t *)realloc((yyval.port_list) -> ports, sizeof(struct port_t) * ((yyvsp[-2].port_list) -> count + 1));
                         (yyval.port_list) -> ports[(yyvsp[-2].port_list) -> count] = (yyvsp[0].port);
                         (yyval.port_list) -> count = (yyvsp[-2].port_list) -> count + 1;
                     }
-#line 1658 "y.tab.c"
+#line 1721 "y.tab.c"
     break;
 
   case 8:
-#line 332 "src/verilogParser.y"
+#line 339 "src/verilogParser.y"
                     {
                         (yyval.internal_port_list) = (struct internal_port_list_t *)malloc(sizeof(struct internal_port_list_t));
                         (yyval.internal_port_list) -> ports = (struct port_t *)malloc(sizeof(struct port_t));
                         (yyval.internal_port_list) -> ports[0] = (yyvsp[-1].port);
                         (yyval.internal_port_list) -> count = 1;
                     }
-#line 1669 "y.tab.c"
+#line 1732 "y.tab.c"
     break;
 
   case 9:
-#line 339 "src/verilogParser.y"
+#line 346 "src/verilogParser.y"
                     {
                         (yyval.internal_port_list) = (yyvsp[-2].internal_port_list);
                         (yyval.internal_port_list) -> ports = (struct port_t *)realloc((yyval.internal_port_list) -> ports, sizeof(struct port_t) * ((yyvsp[-2].internal_port_list) -> count + 1));
                         (yyval.internal_port_list) -> ports[(yyvsp[-2].internal_port_list) -> count] = (yyvsp[-1].port);
                         (yyval.internal_port_list) -> count = (yyvsp[-2].internal_port_list) -> count + 1;
                     }
-#line 1680 "y.tab.c"
+#line 1743 "y.tab.c"
     break;
 
   case 10:
-#line 347 "src/verilogParser.y"
+#line 354 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "input";
                         (yyval.port).width = 1;
                     }
-#line 1690 "y.tab.c"
+#line 1753 "y.tab.c"
     break;
 
   case 11:
-#line 353 "src/verilogParser.y"
+#line 360 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "output";
                         (yyval.port).width = 1;
                     }
-#line 1700 "y.tab.c"
+#line 1763 "y.tab.c"
     break;
 
   case 12:
-#line 359 "src/verilogParser.y"
+#line 366 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "wire";
                         (yyval.port).width = 1;
                     }
-#line 1710 "y.tab.c"
+#line 1773 "y.tab.c"
     break;
 
   case 13:
-#line 365 "src/verilogParser.y"
+#line 372 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "reg";
                         (yyval.port).width = 1;
                     }
-#line 1720 "y.tab.c"
+#line 1783 "y.tab.c"
     break;
 
   case 14:
-#line 371 "src/verilogParser.y"
+#line 378 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "input";
                         (yyval.port).width = abs((yyvsp[-4].intval) - (yyvsp[-2].intval)) + 1;
                     }
-#line 1730 "y.tab.c"
+#line 1793 "y.tab.c"
     break;
 
   case 15:
-#line 377 "src/verilogParser.y"
+#line 384 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "output";
                         (yyval.port).width = abs((yyvsp[-4].intval) - (yyvsp[-2].intval)) + 1;
                     }
-#line 1740 "y.tab.c"
+#line 1803 "y.tab.c"
     break;
 
   case 16:
-#line 383 "src/verilogParser.y"
+#line 390 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "wire";
                         (yyval.port).width = abs((yyvsp[-4].intval) - (yyvsp[-2].intval)) + 1;
                     }
-#line 1750 "y.tab.c"
+#line 1813 "y.tab.c"
     break;
 
   case 17:
-#line 389 "src/verilogParser.y"
+#line 396 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "reg";
                         (yyval.port).width = abs((yyvsp[-4].intval) - (yyvsp[-2].intval)) + 1;
                     }
-#line 1760 "y.tab.c"
+#line 1823 "y.tab.c"
     break;
 
   case 18:
-#line 395 "src/verilogParser.y"
+#line 402 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[0].strval);
                         (yyval.port).type = "wire";
                         (yyval.port).width = 1;
                     }
-#line 1770 "y.tab.c"
+#line 1833 "y.tab.c"
     break;
 
   case 19:
-#line 401 "src/verilogParser.y"
+#line 408 "src/verilogParser.y"
                     {
                         (yyval.port).name = (yyvsp[-5].strval);
                         (yyval.port).type = "wire";
                         (yyval.port).width = abs((yyvsp[-3].intval) - (yyvsp[-1].intval)) + 1;
                     }
-#line 1780 "y.tab.c"
+#line 1843 "y.tab.c"
     break;
 
   case 20:
-#line 409 "src/verilogParser.y"
+#line 416 "src/verilogParser.y"
                 {
                     (yyval.module_body) = (struct module_body_t *)malloc(sizeof(struct module_body_t));
                     (yyval.module_body) -> internal_port_list = (yyvsp[-1].internal_port_list);
                     (yyval.module_body) -> always_list = (yyvsp[0].always_list);
                 }
-#line 1790 "y.tab.c"
+#line 1853 "y.tab.c"
     break;
 
   case 21:
-#line 415 "src/verilogParser.y"
+#line 422 "src/verilogParser.y"
                 {
                     (yyval.module_body) = (struct module_body_t *)malloc(sizeof(struct module_body_t));
                     (yyval.module_body) -> internal_port_list = (yyvsp[0].internal_port_list);
                     (yyval.module_body) -> always_list = NULL;
                 }
-#line 1800 "y.tab.c"
+#line 1863 "y.tab.c"
     break;
 
   case 22:
-#line 423 "src/verilogParser.y"
+#line 430 "src/verilogParser.y"
                 {
                     (yyval.always_list) = (struct always_list_t *)malloc(sizeof(struct always_list_t));
                     (yyval.always_list) -> always_block = (struct always_block_t *)malloc(sizeof(struct always_block_t));
                     (yyval.always_list) -> always_block[0] = (yyvsp[0].always_block);
                     (yyval.always_list) -> count = 1;
                 }
-#line 1811 "y.tab.c"
+#line 1874 "y.tab.c"
     break;
 
   case 23:
-#line 430 "src/verilogParser.y"
+#line 437 "src/verilogParser.y"
                 {
                     (yyval.always_list) = (yyvsp[-1].always_list);
                     (yyval.always_list) -> always_block = (struct always_block_t *)realloc((yyval.always_list) -> always_block, sizeof(struct always_block_t) * ((yyvsp[-1].always_list) -> count + 1));
                     (yyval.always_list) -> always_block[(yyvsp[-1].always_list) -> count] = (yyvsp[0].always_block);
                     (yyval.always_list) -> count = (yyvsp[-1].always_list) -> count + 1;
                 }
-#line 1822 "y.tab.c"
+#line 1885 "y.tab.c"
     break;
 
   case 24:
-#line 440 "src/verilogParser.y"
+#line 447 "src/verilogParser.y"
                 {
                     (yyval.always_block).condition = (yyvsp[-2].strval);
                     (yyval.always_block).statement = (yyvsp[0].statement);
                 }
-#line 1831 "y.tab.c"
+#line 1894 "y.tab.c"
     break;
 
   case 25:
-#line 447 "src/verilogParser.y"
+#line 454 "src/verilogParser.y"
                     {
                         (yyval.statement) = (yyvsp[-1].statement);
                     }
-#line 1839 "y.tab.c"
+#line 1902 "y.tab.c"
     break;
 
   case 26:
-#line 452 "src/verilogParser.y"
+#line 459 "src/verilogParser.y"
                     {
                         (yyval.statement) = (yyvsp[0].statement);
                     }
-#line 1847 "y.tab.c"
+#line 1910 "y.tab.c"
     break;
 
   case 27:
-#line 456 "src/verilogParser.y"
+#line 463 "src/verilogParser.y"
                     {
                         (yyval.statement) = (yyvsp[-1].statement);
                         struct statement_t *p = (yyval.statement);
@@ -1857,53 +1920,141 @@ yyreduce:
                         }
                         p -> tail = (yyvsp[0].statement);
                     }
-#line 1861 "y.tab.c"
+#line 1924 "y.tab.c"
     break;
 
   case 28:
-#line 467 "src/verilogParser.y"
+#line 474 "src/verilogParser.y"
             {
                 (yyval.statement) = (struct statement_t *)malloc(sizeof(struct statement_t));
                 (yyval.statement) -> head = NULL;
                 (yyval.statement) -> tail = NULL;
                 (yyval.statement) -> expression = (yyvsp[-1].strval);
                 (yyval.statement) -> flag = 1;
+                (yyval.statement) -> type = "ordinary_statement";
+                (yyval.statement) -> condition = NULL;
             }
-#line 1873 "y.tab.c"
+#line 1938 "y.tab.c"
     break;
 
   case 29:
-#line 475 "src/verilogParser.y"
+#line 484 "src/verilogParser.y"
             {
                 (yyval.statement) = (struct statement_t *)malloc(sizeof(struct statement_t));
                 (yyval.statement) -> head = (yyvsp[0].statement);
                 (yyval.statement) -> tail = NULL;
                 (yyval.statement) -> expression = NULL;
                 (yyval.statement) -> flag = 0;
+                (yyval.statement) -> type = "ordinary_statement";
+                (yyval.statement) -> condition = NULL;
             }
-#line 1885 "y.tab.c"
+#line 1952 "y.tab.c"
     break;
 
   case 30:
-#line 500 "src/verilogParser.y"
+#line 494 "src/verilogParser.y"
             {
-                (yyval.strval) = (yyvsp[0].strval);
+                (yyval.statement) = (struct statement_t *)malloc(sizeof(struct statement_t));
+                (yyval.statement) -> head = (yyvsp[0].statement);
+                (yyval.statement) -> tail = NULL;
+                (yyval.statement) -> expression = NULL;
+                (yyval.statement) -> flag = 0;
+                (yyval.statement) -> type = "if_statement";
+                (yyval.statement) -> condition = (yyvsp[-2].strval);
             }
-#line 1893 "y.tab.c"
+#line 1966 "y.tab.c"
     break;
 
   case 31:
 #line 504 "src/verilogParser.y"
             {
+                (yyval.statement) = (struct statement_t *)malloc(sizeof(struct statement_t));
+                (yyval.statement) -> head = (yyvsp[-2].statement);
+
+                (yyval.statement) -> tail = (struct statement_t *)malloc(sizeof(struct statement_t));
+                (yyval.statement) -> tail -> head = (yyvsp[0].statement);
+                (yyval.statement) -> tail -> tail = NULL;
+                (yyval.statement) -> tail -> expression = NULL;
+                (yyval.statement) -> tail -> flag = 0;
+                (yyval.statement) -> tail -> type = "else_statement";
+                (yyval.statement) -> tail -> condition = NULL;
+
+                (yyval.statement) -> expression = NULL;
+                (yyval.statement) -> flag = 0;
+                (yyval.statement) -> type = "if_statement";
+                (yyval.statement) -> condition = (yyvsp[-4].strval);
+            }
+#line 1988 "y.tab.c"
+    break;
+
+  case 32:
+#line 535 "src/verilogParser.y"
+            {
+                (yyval.strval) = (yyvsp[0].strval);
+            }
+#line 1996 "y.tab.c"
+    break;
+
+  case 33:
+#line 539 "src/verilogParser.y"
+            {
                 char *str = (char *)malloc(sizeof(char) * 32);
                 sprintf(str, "%d", (yyvsp[0].intval));
                 (yyval.strval) = str;
             }
-#line 1903 "y.tab.c"
+#line 2006 "y.tab.c"
+    break;
+
+  case 53:
+#line 564 "src/verilogParser.y"
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s != %s", (yyvsp[-2].strval), (yyvsp[0].strval));
+                (yyval.strval) = str;
+            }
+#line 2016 "y.tab.c"
+    break;
+
+  case 54:
+#line 570 "src/verilogParser.y"
+            {
+                (yyval.strval) = (yyvsp[-1].strval);
+            }
+#line 2024 "y.tab.c"
+    break;
+
+  case 55:
+#line 574 "src/verilogParser.y"
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s ? %s : %s", (yyvsp[-4].strval), (yyvsp[-2].strval), (yyvsp[0].strval));
+                (yyval.strval) = str;
+            }
+#line 2034 "y.tab.c"
+    break;
+
+  case 56:
+#line 580 "src/verilogParser.y"
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s[%s]", (yyvsp[-3].strval), (yyvsp[-1].strval));
+                (yyval.strval) = str;
+            }
+#line 2044 "y.tab.c"
+    break;
+
+  case 57:
+#line 586 "src/verilogParser.y"
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s[%s:%s]", (yyvsp[-5].strval), (yyvsp[-3].strval), (yyvsp[-1].strval));
+                (yyval.strval) = str;
+            }
+#line 2054 "y.tab.c"
     break;
 
 
-#line 1907 "y.tab.c"
+#line 2058 "y.tab.c"
 
       default: break;
     }
@@ -2135,7 +2286,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 514 "src/verilogParser.y"
+#line 593 "src/verilogParser.y"
 
 
 void yyerror(const char *msg)

@@ -134,6 +134,8 @@ union YYSTYPE
         struct statement_t *tail;
         char *expression;
         int flag;
+        char *type;
+        char *condition;
     } *statement;
 
     struct caseItemList_t 
@@ -152,7 +154,7 @@ union YYSTYPE
     int intval;
 
 
-#line 156 "y.tab.h"
+#line 158 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

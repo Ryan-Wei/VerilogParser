@@ -55,6 +55,8 @@ void yyerror(const char *msg);
         struct statement_t *tail;
         char *expression;
         int flag;
+        char *type;
+        char *condition;
     } *statement;
 
     struct caseItemList_t 
@@ -234,17 +236,22 @@ static void print_statement(struct statement_t *p)
 
     if (p -> flag) 
     {
+
         json_add_string("expression", p -> expression);
         print_statement(p -> tail);
     }
     else 
     {
-        json_start_object("statement", "statement_block");
+        json_start_object("statement", p -> type);
+            if (p -> condition) 
+            {
+                json_add_string("condition", p -> condition);
+            }
             print_statement(p -> head);
         json_end_object();
+        print_statement(p -> tail);
     }
 }
-
 
 
 %}
@@ -302,7 +309,7 @@ module_declaration  : MODULE IDENTIFIER '(' port_list ')' ';' module_body ENDMOD
                                         {
                                             json_start_object("always_block", "always_definition");
                                                 json_add_string("condition", $7 -> always_list -> always_block[i].condition);
-                                                json_start_object("statement", "statement_block");
+                                                json_start_object("statement", $7 -> always_list -> always_block[i].statement -> type);
                                                     print_statement($7 -> always_list -> always_block[i].statement);
                                                 json_end_object(); // end statement block
                                             json_end_object();
@@ -470,6 +477,8 @@ statement   : expression ';'
                 $$ -> tail = NULL;
                 $$ -> expression = $1;
                 $$ -> flag = 1;
+                $$ -> type = "ordinary_statement";
+                $$ -> condition = NULL;
             }
             | statement_block
             {
@@ -478,12 +487,38 @@ statement   : expression ';'
                 $$ -> tail = NULL;
                 $$ -> expression = NULL;
                 $$ -> flag = 0;
+                $$ -> type = "ordinary_statement";
+                $$ -> condition = NULL;
+            }
+            | IF '(' expression ')' statement
+            {
+                $$ = (struct statement_t *)malloc(sizeof(struct statement_t));
+                $$ -> head = $5;
+                $$ -> tail = NULL;
+                $$ -> expression = NULL;
+                $$ -> flag = 0;
+                $$ -> type = "if_statement";
+                $$ -> condition = $3;
+            }
+            | IF '(' expression ')' statement ELSE statement
+            {
+                $$ = (struct statement_t *)malloc(sizeof(struct statement_t));
+                $$ -> head = $5;
+
+                $$ -> tail = (struct statement_t *)malloc(sizeof(struct statement_t));
+                $$ -> tail -> head = $7;
+                $$ -> tail -> tail = NULL;
+                $$ -> tail -> expression = NULL;
+                $$ -> tail -> flag = 0;
+                $$ -> tail -> type = "else_statement";
+                $$ -> tail -> condition = NULL;
+
+                $$ -> expression = NULL;
+                $$ -> flag = 0;
+                $$ -> type = "if_statement";
+                $$ -> condition = $3;
             }
 
-
-
-ifBlock     : IF '(' expression ')' statement
-            | IF '(' expression ')' statement ELSE statement
 
 
 caseBlock   : CASE '(' expression ')' caseItemList
@@ -506,9 +541,53 @@ expression  : IDENTIFIER
                 sprintf(str, "%d", $1);
                 $$ = str;
             }
-
-
-
+            | expression '+' expression
+            | expression '-' expression
+            | expression '*' expression
+            | expression '/' expression
+            | expression '%' expression
+            | expression '&' expression
+            | expression '|' expression
+            | expression '^' expression
+            | expression '~' expression
+            | expression '<' expression
+            | expression '>' expression
+            | expression '>>' expression
+            | expression '>>>' expression
+            | expression '<<' expression
+            | expression '==' expression
+            | expression '!=' expression
+            | expression '<=' expression
+            | expression '>=' expression
+            | expression '&&' expression
+            | expression '||' expression  
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s != %s", $1, $3);
+                $$ = str;
+            }
+            | '(' expression ')'
+            {
+                $$ = $2;
+            }
+            | expression '?' expression ':' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s ? %s : %s", $1, $3, $5);
+                $$ = str;
+            }
+            | expression '[' expression ']'
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s[%s]", $1, $3);
+                $$ = str;
+            }
+            | expression '[' expression ':' expression ']'
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s[%s:%s]", $1, $3, $5);
+                $$ = str;
+            }
 
 
 %%

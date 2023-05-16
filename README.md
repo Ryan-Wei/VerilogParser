@@ -208,7 +208,7 @@ Lex and Yacc (or Flex and Bison) are widely used tools for creating lexical anal
 
 Lex (or Flex) is a lexical analyzer generator that helps in creating lexical analyzers. A lexical analyzer, also known as a lexer or scanner, takes input source code and breaks it down into a stream of tokens. Lex helps in defining regular expressions that specify the patterns for different tokens in the input language. It generates a C or C++ code file that implements the lexer based on the provided regular expressions.
 
-Yacc (or Bison) is a parser generator that aids in creating parsers. A parser is responsible for analyzing the syntax of a language by recognizing the hierarchical structure of the input code. Yacc uses a grammar specification, typically written in a language similar to BNF (Backus-Naur Form), to define the rules and syntax of the input language. It generates a C or C++ code file that implements the parser based on the provided grammar. Yacc (or Bison) is capable of generating both LALR (Look-Ahead LR) and LR (Canonical LR) parsers. 
+Yacc (or Bison) is a parser generator that aids in creating parsers. A parser is responsible for analyzing the syntax of a language by recognizing the hierarchical structure of the input code. Yacc uses a grammar specification, typically written in a language similar to BNF (Backus-Naur Form), to define the rules and syntax of the input language. It generates a C or C++ code file that implements the parser based on the provided grammar. Yacc (or Bison) is capable of generating both LALR (Look-Ahead LR) and LR (Canonical LR) parsers. Both LALR and LR parsers are effective for parsing programming languages and other context-free languages. 
 
 
 
@@ -238,7 +238,7 @@ Here's a breakdown of each step:
 
 ## 4. Code
 
-
+Available at: [Ryan-Wei/parser: a simple verilog parser (github.com)](https://github.com/Ryan-Wei/parser)
 
 #### 4.1 Environment
 

@@ -56,7 +56,15 @@ extern int yydebug;
     WIRE = 262,
     REG = 263,
     IDENTIFIER = 264,
-    NUMBER = 265
+    NUMBER = 265,
+    BEGIN_TOKEN = 266,
+    END_TOKEN = 267,
+    ALWAYS = 268,
+    IF = 269,
+    ELSE = 270,
+    CASE = 271,
+    DEFAULT = 272,
+    ASSIGN = 273
   };
 #endif
 /* Tokens.  */
@@ -68,12 +76,26 @@ extern int yydebug;
 #define REG 263
 #define IDENTIFIER 264
 #define NUMBER 265
+#define BEGIN_TOKEN 266
+#define END_TOKEN 267
+#define ALWAYS 268
+#define IF 269
+#define ELSE 270
+#define CASE 271
+#define DEFAULT 272
+#define ASSIGN 273
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 12 "src/verilogParser.y"
+#line 14 "src/verilogParser.y"
+
+    struct module_body_t 
+    {
+        struct internal_port_list_t *internal_port_list;
+        struct always_list_t *always_list;
+    } *module_body;
 
     struct port_list_t 
     {
@@ -81,15 +103,56 @@ union YYSTYPE
         int count;
     } *port_list;
 
+    struct internal_port_list_t 
+    {
+        struct port_t *ports;
+        int count;
+    } *internal_port_list;
+
     struct port_t 
     {
         char *name;
         char *type;
+        int width;
     } port;
 
-    char* strval;
+    struct always_block_t 
+    {
+        char *condition;
+        struct statement_t *statement;
+    } always_block;
 
-#line 93 "y.tab.h"
+    struct always_list_t 
+    {
+        struct always_block_t *always_block;
+        int count;
+    } *always_list;
+
+    struct statement_t 
+    {
+        struct statement_t *head;
+        struct statement_t *tail;
+        char *expression;
+        int flag;
+    } *statement;
+
+    struct caseItemList_t 
+    {
+        struct caseItem_t *caseItems;
+        int count;
+    } *caseItemList;
+
+    struct caseItem_t 
+    {
+        char *type;
+        char *value;
+    } caseItem;
+
+    char* strval;
+    int intval;
+
+
+#line 156 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

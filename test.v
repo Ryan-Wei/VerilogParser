@@ -8,16 +8,18 @@ module test_module(input a, input b, output c, output d, wire e, reg f); // uycu
     always @ (x)
     begin
         if(x)
-            yyy;
-        else
+            yyy[1:2];
+        else if(y)
             zzz;
+        else
+            www;
     end
-    always @ (2)
+    always @ (operation==add || operation==sub) //counter
     begin
         yyyyy;
         begin
-            1+1;
-            zzzzz;
+            1 <= 2;
+            zzzzz = 222;
             if (xixi)
             begin
                 haha;
@@ -26,6 +28,8 @@ module test_module(input a, input b, output c, output d, wire e, reg f); // uycu
         end
     end
 
+assign y = 1;
+assign y <= 2;
 
 endmodule
 

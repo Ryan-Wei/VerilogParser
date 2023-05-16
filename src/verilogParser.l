@@ -15,13 +15,28 @@
 "end" { return END_TOKEN; }
 "if" { return IF; }
 "else" { return ELSE; }
-"case" { return CASE; }
-"default" { return DEFAULT; }
 "assign" { return ASSIGN; }
+"<=" { return LE; }
+"==" { return EQ; }
+"!=" { return NE; }
+">=" { return GE; }
+"&&" { return AND; }
+"||" { return OR; }
+"!&" { return NAND; }
+"!|" { return NOR; }
+"^|" { return XOR; }
+"^&" { return XNOR; }
+
+"posedge" { return POSEDGE; }
+"negedge" { return NEGEDGE; }
+"or" { return OR_WORD; }
+
+
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.strval = strdup(yytext); return IDENTIFIER; }
 [0-9]+ { yylval.intval = atoi(yytext); return NUMBER; }
 [ \t\r\n]+ { ; } /* ignore whitespace */
+
 "//".* { ; } /* ignore comments */
 . { return yytext[0]; } /* return all other characters */
 %%

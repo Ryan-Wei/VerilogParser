@@ -16,6 +16,7 @@ void yyerror(const char *msg);
     {
         struct internal_port_list_t *internal_port_list;
         struct always_list_t *always_list;
+        struct assign_list_t *assign_list;
     } *module_body;
 
     struct port_list_t 
@@ -59,17 +60,18 @@ void yyerror(const char *msg);
         char *condition;
     } *statement;
 
-    struct caseItemList_t 
+    struct assign_list_t 
     {
-        struct caseItem_t *caseItems;
+        struct assign_statement_t *assign_statement;
         int count;
-    } *caseItemList;
+    } *assign_list;
 
-    struct caseItem_t 
+    struct assign_statement_t 
     {
+        char *left;
+        char *right;
         char *type;
-        char *value;
-    } caseItem;
+    } assign_statement;
 
     char* strval;
     int intval;
@@ -86,31 +88,23 @@ void yyerror(const char *msg);
 %token <intval> NUMBER
 %token <strval> BEGIN_TOKEN
 %token <strval> END_TOKEN
-
-
-
-
-//////////////////////////////////
 %token <strval> ALWAYS
 %token <strval> IF
 %token <strval> ELSE
-%token <strval> CASE
-%token <strval> DEFAULT
 %token <strval> ASSIGN
-
-
-
-
-
-%type <strval> caseItem
-%type <strval> caseItemList
-%type <strval> caseBlock
-%type <strval> ifBlock
-
-//////////////////////////////////
-
-
-
+%token <strval> LE
+%token <strval> GE
+%token <strval> EQ
+%token <strval> NE
+%token <strval> AND
+%token <strval> OR
+%token <strval> NAND
+%token <strval> NOR
+%token <strval> XOR
+%token <strval> XNOR
+%token <strval> POSEDGE
+%token <strval> NEGEDGE
+%token <strval> OR_WORD
 
 
 %type <port_list> port_list
@@ -126,8 +120,8 @@ void yyerror(const char *msg);
 %type <statement> statement
 %type <statement> statement_block
 %type <statement> statement_list
-
-
+%type <assign_list> assign_list
+%type <assign_statement> assign_statement
 
 
 %{
@@ -316,6 +310,21 @@ module_declaration  : MODULE IDENTIFIER '(' port_list ')' ';' module_body ENDMOD
                                         }
                                     json_end_object(); // end always blocks
                                 }
+
+                                if($7 -> assign_list) 
+                                {
+                                    json_start_object("assign_statements", "assign_list");
+                                        for (int i = 0; i < $7 -> assign_list -> count; i++) 
+                                        {
+                                            json_start_object("assign_statement", "assign_statement");
+                                                json_add_string("left_hand_side", $7 -> assign_list -> assign_statement[i].left);
+                                                json_add_string("right_hand_side", $7 -> assign_list -> assign_statement[i].right);
+                                                json_add_string("type", $7 -> assign_list -> assign_statement[i].type);
+                                            json_end_object();
+                                        }
+                                    json_end_object(); // end assign statements
+                                }
+
                             json_end_object(); // end module body
                         json_end_object(); // end module
                      }
@@ -412,17 +421,54 @@ port_declaration    : INPUT IDENTIFIER
                     }
 
 
-module_body     : internal_port_list always_list
+module_body     : internal_port_list always_list assign_list
                 {
                     $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
                     $$ -> internal_port_list = $1;
                     $$ -> always_list = $2;
+                    $$ -> assign_list = $3;
+                }
+                | internal_port_list always_list
+                {
+                    $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
+                    $$ -> internal_port_list = $1;
+                    $$ -> always_list = $2;
+                    $$ -> assign_list = NULL;
+                }
+                | internal_port_list assign_list
+                {
+                    $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
+                    $$ -> internal_port_list = $1;
+                    $$ -> always_list = NULL;
+                    $$ -> assign_list = $2;
                 }
                 | internal_port_list
                 {
                     $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
                     $$ -> internal_port_list = $1;
                     $$ -> always_list = NULL;
+                    $$ -> assign_list = NULL;
+                }
+                | always_list assign_list
+                {
+                    $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
+                    $$ -> internal_port_list = NULL;
+                    $$ -> always_list = $1;
+                    $$ -> assign_list = $2;
+                }
+                | always_list
+                {
+                    $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
+                    $$ -> internal_port_list = NULL;
+                    $$ -> always_list = $1;
+                    $$ -> assign_list = NULL;
+                }
+                | assign_list
+                {
+                    $$ = (struct module_body_t *)malloc(sizeof(struct module_body_t));
+                    $$ -> internal_port_list = NULL;
+                    $$ -> always_list = NULL;
+                    $$ -> assign_list = $1;
                 }
 
 
@@ -519,16 +565,34 @@ statement   : expression ';'
                 $$ -> condition = $3;
             }
 
+            
+assign_list : assign_statement
+            {
+                $$ = (struct assign_list_t *)malloc(sizeof(struct assign_list_t));
+                $$ -> assign_statement = (struct assign_statement_t *)malloc(sizeof(struct assign_statement_t));
+                $$ -> assign_statement[0] = $1;
+                $$ -> count = 1;
+            }
+            | assign_list assign_statement
+            {
+                $$ = $1;
+                $$ -> assign_statement = (struct assign_statement_t *)realloc($$ -> assign_statement, sizeof(struct assign_statement_t) * ($1 -> count + 1));
+                $$ -> assign_statement[$1 -> count] = $2;
+                $$ -> count = $1 -> count + 1;
+            }
 
-
-caseBlock   : CASE '(' expression ')' caseItemList
-            | CASE '(' expression ')' caseItemList DEFAULT statement
-
-caseItemList: caseItem
-            | caseItemList caseItem
-
-caseItem    : NUMBER ':' statement
-
+assign_statement    : ASSIGN IDENTIFIER '=' expression ';'
+                    {
+                        $$.left = $2;
+                        $$.right = $4;
+                        $$.type = "blocking assignment";
+                    }
+                    | ASSIGN IDENTIFIER LE expression ';'
+                    {
+                        $$.left = $2;
+                        $$.right = $4;
+                        $$.type = "non-blocking assignment";
+                    }
 
 
 expression  : IDENTIFIER
@@ -541,29 +605,130 @@ expression  : IDENTIFIER
                 sprintf(str, "%d", $1);
                 $$ = str;
             }
+            | expression '=' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s = %s", $1, $3);
+                $$ = str;
+            }
             | expression '+' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s + %s", $1, $3);
+                $$ = str;
+            }
             | expression '-' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s - %s", $1, $3);
+                $$ = str;
+            }
             | expression '*' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s * %s", $1, $3);
+                $$ = str;
+            }
             | expression '/' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s / %s", $1, $3);
+                $$ = str;
+            }
             | expression '%' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s %% %s", $1, $3);
+                $$ = str;
+            }
             | expression '&' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s & %s", $1, $3);
+                $$ = str;
+            }
             | expression '|' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s | %s", $1, $3);
+                $$ = str;
+            }
             | expression '^' expression
-            | expression '~' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s ^ %s", $1, $3);
+                $$ = str;
+            }
+            |'~' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "~%s", $2);
+                $$ = str;
+            }
             | expression '<' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s < %s", $1, $3);
+                $$ = str;
+            }
             | expression '>' expression
-            | expression '>>' expression
-            | expression '>>>' expression
-            | expression '<<' expression
-            | expression '==' expression
-            | expression '!=' expression
-            | expression '<=' expression
-            | expression '>=' expression
-            | expression '&&' expression
-            | expression '||' expression  
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s > %s", $1, $3);
+                $$ = str;
+            }
+            | expression LE expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s <= %s", $1, $3);
+                $$ = str;
+            }
+            | expression EQ expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s == %s", $1, $3);
+                $$ = str;
+            }
+            | expression NE expression
             {
                 char *str = (char *)malloc(sizeof(char) * 32);
                 sprintf(str, "%s != %s", $1, $3);
+                $$ = str;
+            }
+            | expression AND expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s && %s", $1, $3);
+                $$ = str;
+            }
+            | expression OR expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s || %s", $1, $3);
+                $$ = str;
+            }
+            | expression NAND expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s !& %s", $1, $3);
+                $$ = str;
+            }
+            | expression NOR expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s !| %s", $1, $3);
+                $$ = str;
+            }
+            | expression XOR expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s ^| %s", $1, $3);
+                $$ = str;
+            }
+            | expression XNOR expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "%s ^& %s", $1, $3);
                 $$ = str;
             }
             | '(' expression ')'
@@ -588,9 +753,33 @@ expression  : IDENTIFIER
                 sprintf(str, "%s[%s:%s]", $1, $3, $5);
                 $$ = str;
             }
-
+            | POSEDGE IDENTIFIER
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "posedge %s", $2);
+                $$ = str;
+            }
+            | NEGEDGE IDENTIFIER
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "negedge %s", $2);
+                $$ = str;
+            }
+            | NEGEDGE IDENTIFIER OR_WORD POSEDGE IDENTIFIER
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "negedge %s or posedge %s", $2, $5);
+                $$ = str;
+            }
+            | POSEDGE IDENTIFIER OR_WORD NEGEDGE IDENTIFIER
+            {
+                char *str = (char *)malloc(sizeof(char) * 32);
+                sprintf(str, "posedge %s or negedge %s", $2, $5);
+                $$ = str;
+            }
 
 %%
+
 
 void yyerror(const char *msg)
 {

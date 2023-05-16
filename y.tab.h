@@ -62,9 +62,20 @@ extern int yydebug;
     ALWAYS = 268,
     IF = 269,
     ELSE = 270,
-    CASE = 271,
-    DEFAULT = 272,
-    ASSIGN = 273
+    ASSIGN = 271,
+    LE = 272,
+    GE = 273,
+    EQ = 274,
+    NE = 275,
+    AND = 276,
+    OR = 277,
+    NAND = 278,
+    NOR = 279,
+    XOR = 280,
+    XNOR = 281,
+    POSEDGE = 282,
+    NEGEDGE = 283,
+    OR_WORD = 284
   };
 #endif
 /* Tokens.  */
@@ -81,9 +92,20 @@ extern int yydebug;
 #define ALWAYS 268
 #define IF 269
 #define ELSE 270
-#define CASE 271
-#define DEFAULT 272
-#define ASSIGN 273
+#define ASSIGN 271
+#define LE 272
+#define GE 273
+#define EQ 274
+#define NE 275
+#define AND 276
+#define OR 277
+#define NAND 278
+#define NOR 279
+#define XOR 280
+#define XNOR 281
+#define POSEDGE 282
+#define NEGEDGE 283
+#define OR_WORD 284
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -95,6 +117,7 @@ union YYSTYPE
     {
         struct internal_port_list_t *internal_port_list;
         struct always_list_t *always_list;
+        struct assign_list_t *assign_list;
     } *module_body;
 
     struct port_list_t 
@@ -138,23 +161,24 @@ union YYSTYPE
         char *condition;
     } *statement;
 
-    struct caseItemList_t 
+    struct assign_list_t 
     {
-        struct caseItem_t *caseItems;
+        struct assign_statement_t *assign_statement;
         int count;
-    } *caseItemList;
+    } *assign_list;
 
-    struct caseItem_t 
+    struct assign_statement_t 
     {
+        char *left;
+        char *right;
         char *type;
-        char *value;
-    } caseItem;
+    } assign_statement;
 
     char* strval;
     int intval;
 
 
-#line 158 "y.tab.h"
+#line 182 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

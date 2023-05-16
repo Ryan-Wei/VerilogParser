@@ -11,9 +11,9 @@ clean:
 
 
 build:
-	yacc -d src/verilogParser.y
+	yacc -d src/verilogParser.y -Wno-conflicts-sr
 	lex src/verilogParser.l
-	cc lex.yy.c y.tab.c -o bin/verilogParser -ll
+	cc lex.yy.c y.tab.c -o bin/verilogParser -ll 
 
 run:
 	./bin/verilogParser

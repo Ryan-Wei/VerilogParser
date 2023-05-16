@@ -25,7 +25,6 @@ void yyerror(const char *msg);
     char* strval;
 }
 
-
 %token <strval> MODULE 
 %token <strval> ENDMODULE 
 %token <strval> INPUT 
@@ -37,8 +36,8 @@ void yyerror(const char *msg);
 
 %type <port_list> port_list
 %type <port> port_declaration
-
-
+%type <strval> verilog_file
+%type <strval> module_declaration_list
 
 %{
 
@@ -209,7 +208,6 @@ port_declaration    : INPUT IDENTIFIER
                         $$.name = $2;
                         $$.type = "reg";
                     }
-            
 
 %%
 

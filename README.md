@@ -2,7 +2,7 @@
 
 
 
-<img src="D:\A\exchange\courses\prog\project\parser\README.assets\image-20230516003259035.png" alt="image-20230516003259035" style="zoom:57%;" /> 
+<img src=".\README.assets\image-20230516003259035.png" alt="image-20230516003259035" style="zoom:57%;" /> 
 
 ​	**Department of Electrical Engineering and Computer Science**
 
@@ -1877,11 +1877,11 @@ endmodule
 
 #### 5.1 Screenshot
 
-![image-20230517120114499](D:\A\exchange\courses\prog\project\parser\README.assets\image-20230517120114499.png)
+![image-20230517120114499](.\README.assets\image-20230517120114499.png)
 
-![image-20230517120511993](D:\A\exchange\courses\prog\project\parser\README.assets\image-20230517120511993.png)
+![image-20230517120511993](.\README.assets\image-20230517120511993.png)
 
-![image-20230517120134149](D:\A\exchange\courses\prog\project\parser\README.assets\image-20230517120134149.png)
+![image-20230517120134149](.\README.assets\image-20230517120134149.png)
 
 #### 5.2 Complete output
 

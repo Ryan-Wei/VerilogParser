@@ -1877,11 +1877,11 @@ endmodule
 
 #### 5.1 Screenshot
 
-![sc1](.\README.assets\sc1.png)
+![sc1](./README.assets/sc1.png)
 
-![sc2](.\README.assets\sc2.png)
+![sc2](./README.assets/sc2.png)
 
-![sc3](.\README.assets\sc3.png)
+![sc3](./README.assets/sc3.png)
 
 #### 5.2 Complete output
 

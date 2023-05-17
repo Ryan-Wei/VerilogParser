@@ -450,7 +450,7 @@ binary_operator     : '+'
 
 ## 3. Flow Chart
 
-<img src="D:\A\exchange\courses\prog\project\parser\README.assets\flowchart.png" alt="flowchart" style="zoom:38%;" />
+<img src=".\README.assets\flowchart.png" alt="flowchart" style="zoom:38%;" />
 
 Here's a breakdown of each step:
 
@@ -1877,11 +1877,11 @@ endmodule
 
 #### 5.1 Screenshot
 
-![image-20230517120114499](.\README.assets\image-20230517120114499.png)
+![sc1](.\README.assets\sc1.png)
 
-![image-20230517120511993](.\README.assets\image-20230517120511993.png)
+![sc2](.\README.assets\sc2.png)
 
-![image-20230517120134149](.\README.assets\image-20230517120134149.png)
+![sc3](.\README.assets\sc3.png)
 
 #### 5.2 Complete output
 

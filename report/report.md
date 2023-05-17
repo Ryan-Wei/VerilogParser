@@ -42,7 +42,7 @@
 
 > Tao Wei (100063849)
 >
-> Available at: [Ryan-Wei/parser: a simple verilog parser (github.com)](https://github.com/Ryan-Wei/parser)
+> Available at: [Ryan-Wei/VerilogParser: a simple verilog parser (github.com)](https://github.com/Ryan-Wei/VerilogParser)
 
 
 
@@ -470,7 +470,7 @@ Here's a breakdown of each step:
 
 ## 4. Code
 
-Available at: [Ryan-Wei/parser: a simple verilog parser (github.com)](https://github.com/Ryan-Wei/parser)
+Available at:[Ryan-Wei/VerilogParser: a simple verilog parser (github.com)](https://github.com/Ryan-Wei/VerilogParser)
 
 #### 4.1 Environment
 

@@ -32,13 +32,39 @@
 "negedge" { return NEGEDGE; }
 "or" { return OR_WORD; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.strval = strdup(yytext); return IDENTIFIER; }
-[0-9]+ { yylval.intval = atoi(yytext); return NUMBER; }
-[0-9]+'[bodh][a-zA-Z0-9_]+   { yylval.strval = strdup(yytext); return NUMBER_EXPR; }
-[ \t\r\n]+ { ; } /* ignore whitespace */
-
-"//".* { ; } /* ignore comments */
-. { return yytext[0]; } /* return all other characters */
+[a-zA-Z_][a-zA-Z0-9_]* { 
+    // Assign the matched identifier to yylval.
+    yylval.strval = strdup(yytext);
+    // Return the token type IDENTIFIER.
+    return IDENTIFIER;
+}
+[0-9]+ { 
+    // Convert the matched number to an integer and assign it to yylval.
+    yylval.intval = atoi(yytext);
+    // Return the token type NUMBER.
+    return NUMBER;
+}
+[0-9]+'[bodh][a-zA-Z0-9_]+   { 
+    // Assign the matched number expression to yylval.
+    yylval.strval = strdup(yytext);
+    // Return the token type NUMBER_EXPR.
+    return NUMBER_EXPR;
+}
+[ \t\r\n]+ { 
+    // Ignore whitespace.
+    ; 
+}
+"//".* { 
+    // Ignore comments.
+    ; 
+}
+. { 
+    // Return any other character as is.
+    return yytext[0]; 
+}
 %%
 
-int yywrap() { return 1; }
+int yywrap() { 
+    // Indicate the end of input.
+    return 1; 
+}

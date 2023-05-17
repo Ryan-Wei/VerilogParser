@@ -29,15 +29,15 @@ reg             signA;//√
 reg             signB;//√
 reg             cin;//√
 reg             cout;//√
-reg[31:0]       add_result;//加法器输出//√
-reg             mul_n0;//乘法时添加一位//√
+reg[31:0]       add_result;//√
+reg             mul_n0;//√
 reg             busy_mul;//√
 reg             busy_div;//√
-reg             quotient;//上商√
-reg[31:0]       mul_div_reg;//存放被乘数或者除数√
-reg[31:0]       operandB_inner;//内部操作数B√
+reg             quotient;//√
+reg[31:0]       mul_div_reg;//√
+reg[31:0]       operandB_inner;//√
 reg[5:0]        counter;//√
-reg[1:0]        opcode_inner;//内部操作码，实现加减以及加0√
+reg[1:0]        opcode_inner;//√
 
 integer     add=3'b000;
 integer     sub=3'b001;
@@ -63,7 +63,7 @@ begin
             counter<=6'b100001;   
 end
 
-always @ (posedge clk or negedge rst) //三个busy 相当于表示两种状态，busy作为输出
+    always @ (posedge clk or negedge rst) // three busy s, two states, busy as 
 begin
     if(!rst)
     begin
@@ -97,7 +97,7 @@ begin
     end
 end
 
-always @ (posedge clk or negedge rst)//除法运算记录两个符号
+    always @ (posedge clk or negedge rst)// record two symbols in div operation
 begin
     if(!rst)
     begin
@@ -123,7 +123,7 @@ begin
         else if (busy_mul==1)
             {result,mul_n0}<={add_result[31],add_result,result[31:0]};
 
-        else if(operation==div && busy==0)//除法，此时不考虑mul_n0
+        else if(operation==div && busy==0)// div，ignore mul_n0
             if(signA)
                 result<={32'hffffffff,operandA};
             else
@@ -171,7 +171,7 @@ begin
     quotient=1'b0;
     if(busy_div)
     begin
-        if(~(add_result[31]^signB))//同号
+        if(~(add_result[31]^signB))// same sign
             quotient=1;
     end
 end
@@ -180,7 +180,7 @@ always @ (busy, result, operation)
 begin
     if(busy)
     begin
-        if(busy_mul)//乘法
+        if(busy_mul)// mul
         begin
             if({result[0],mul_n0}==2'b11 || {result[0],mul_n0}==2'b00)
                 opcode_inner=2'b00;//加0
@@ -196,13 +196,13 @@ begin
                 opcode_inner=2'b11;
             else
                 begin
-                if(add_result[31]^signB)//异号
+                	if(add_result[31]^signB)//different sign
+                	begin
+                    	opcode_inner=2'b01;// add
+                	end
+                else// same sign
                 begin
-                    opcode_inner=2'b01;//加
-                end
-                else//同号
-                begin
-                    opcode_inner=2'b11;//减
+                    opcode_inner=2'b11;// sub
                 end
             end
         end
@@ -211,15 +211,15 @@ begin
     else
     begin
         if(operation==add)
-            opcode_inner=2'b01;//加
+            opcode_inner=2'b01;// add
         else if(operation==sub)
-            opcode_inner=2'b11;//减
+            opcode_inner=2'b11;// sub
         else
             opcode_inner=2'b00;
     end
 end
 
-always @ (opcode_inner, operandB_inner)//控制加法器
+always @ (opcode_inner, operandB_inner)// control adder
 begin
     if (opcode_inner==2'b00)
     begin
@@ -242,7 +242,6 @@ begin
         cin=1;
     end
 end
-
 
 // delete the following lines to make simulation work
 assign the_statement = just_for_testing;

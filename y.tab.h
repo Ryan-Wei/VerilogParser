@@ -55,27 +55,29 @@ extern int yydebug;
     OUTPUT = 261,
     WIRE = 262,
     REG = 263,
-    IDENTIFIER = 264,
-    NUMBER = 265,
-    BEGIN_TOKEN = 266,
-    END_TOKEN = 267,
-    ALWAYS = 268,
-    IF = 269,
-    ELSE = 270,
-    ASSIGN = 271,
-    LE = 272,
-    GE = 273,
-    EQ = 274,
-    NE = 275,
-    AND = 276,
-    OR = 277,
-    NAND = 278,
-    NOR = 279,
-    XOR = 280,
-    XNOR = 281,
-    POSEDGE = 282,
-    NEGEDGE = 283,
-    OR_WORD = 284
+    INTEGER = 264,
+    IDENTIFIER = 265,
+    NUMBER = 266,
+    NUMBER_EXPR = 267,
+    BEGIN_TOKEN = 268,
+    END_TOKEN = 269,
+    ALWAYS = 270,
+    IF = 271,
+    ELSE = 272,
+    ASSIGN = 273,
+    LE = 274,
+    GE = 275,
+    EQ = 276,
+    NE = 277,
+    AND = 278,
+    OR = 279,
+    NAND = 280,
+    NOR = 281,
+    XOR = 282,
+    XNOR = 283,
+    POSEDGE = 284,
+    NEGEDGE = 285,
+    OR_WORD = 286
   };
 #endif
 /* Tokens.  */
@@ -85,27 +87,29 @@ extern int yydebug;
 #define OUTPUT 261
 #define WIRE 262
 #define REG 263
-#define IDENTIFIER 264
-#define NUMBER 265
-#define BEGIN_TOKEN 266
-#define END_TOKEN 267
-#define ALWAYS 268
-#define IF 269
-#define ELSE 270
-#define ASSIGN 271
-#define LE 272
-#define GE 273
-#define EQ 274
-#define NE 275
-#define AND 276
-#define OR 277
-#define NAND 278
-#define NOR 279
-#define XOR 280
-#define XNOR 281
-#define POSEDGE 282
-#define NEGEDGE 283
-#define OR_WORD 284
+#define INTEGER 264
+#define IDENTIFIER 265
+#define NUMBER 266
+#define NUMBER_EXPR 267
+#define BEGIN_TOKEN 268
+#define END_TOKEN 269
+#define ALWAYS 270
+#define IF 271
+#define ELSE 272
+#define ASSIGN 273
+#define LE 274
+#define GE 275
+#define EQ 276
+#define NE 277
+#define AND 278
+#define OR 279
+#define NAND 280
+#define NOR 281
+#define XOR 282
+#define XNOR 283
+#define POSEDGE 284
+#define NEGEDGE 285
+#define OR_WORD 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -178,7 +182,7 @@ union YYSTYPE
     int intval;
 
 
-#line 182 "y.tab.h"
+#line 186 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -9,6 +9,7 @@
 "output" { return OUTPUT; }
 "wire" { return WIRE; }
 "reg" { return REG; }
+"integer" { return INTEGER; }
 
 "always" { return ALWAYS; }
 "begin" { return BEGIN_TOKEN; }
@@ -31,10 +32,9 @@
 "negedge" { return NEGEDGE; }
 "or" { return OR_WORD; }
 
-
-
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.strval = strdup(yytext); return IDENTIFIER; }
 [0-9]+ { yylval.intval = atoi(yytext); return NUMBER; }
+[0-9]+'[bodh][a-zA-Z0-9_]+   { yylval.strval = strdup(yytext); return NUMBER_EXPR; }
 [ \t\r\n]+ { ; } /* ignore whitespace */
 
 "//".* { ; } /* ignore comments */

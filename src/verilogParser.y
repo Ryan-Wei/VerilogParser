@@ -84,8 +84,10 @@ void yyerror(const char *msg);
 %token <strval> OUTPUT 
 %token <strval> WIRE 
 %token <strval> REG
+%token <strval> INTEGER
 %token <strval> IDENTIFIER 
 %token <intval> NUMBER
+%token <strval> NUMBER_EXPR
 %token <strval> BEGIN_TOKEN
 %token <strval> END_TOKEN
 %token <strval> ALWAYS
@@ -208,7 +210,7 @@ static void json_add_string(const char *key, const char *value)
 
 static void json_add_number(const char *key, const int value) 
 {
-    char str[32];
+    char str[64];
     sprintf(str, "%d", value);
     print_json_key_value(key, str, json_depth);
 }
@@ -419,6 +421,13 @@ port_declaration    : INPUT IDENTIFIER
                         $$.type = "wire";
                         $$.width = abs($3 - $5) + 1;
                     }
+                    | INTEGER expression
+                    {
+                        $$.name = $2;
+                        $$.type = "integer";
+                        $$.width = 32;
+                    }
+
 
 
 module_body     : internal_port_list always_list assign_list
@@ -601,133 +610,144 @@ expression  : IDENTIFIER
             }
             | NUMBER
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%d", $1);
                 $$ = str;
             }
+            | NUMBER_EXPR
+            {
+                $$ = $1;
+            }
+
             | expression '=' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s = %s", $1, $3);
                 $$ = str;
             }
             | expression '+' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s + %s", $1, $3);
                 $$ = str;
             }
             | expression '-' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s - %s", $1, $3);
                 $$ = str;
             }
             | expression '*' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s * %s", $1, $3);
                 $$ = str;
             }
             | expression '/' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s / %s", $1, $3);
                 $$ = str;
             }
             | expression '%' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s %% %s", $1, $3);
                 $$ = str;
             }
             | expression '&' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s & %s", $1, $3);
                 $$ = str;
             }
             | expression '|' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s | %s", $1, $3);
                 $$ = str;
             }
             | expression '^' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s ^ %s", $1, $3);
                 $$ = str;
             }
             |'~' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "~%s", $2);
+                $$ = str;
+            }
+            | '!' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 64);
+                sprintf(str, "!%s", $2);
                 $$ = str;
             }
             | expression '<' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s < %s", $1, $3);
                 $$ = str;
             }
             | expression '>' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s > %s", $1, $3);
                 $$ = str;
             }
             | expression LE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s <= %s", $1, $3);
                 $$ = str;
             }
             | expression EQ expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s == %s", $1, $3);
                 $$ = str;
             }
             | expression NE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s != %s", $1, $3);
                 $$ = str;
             }
             | expression AND expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s && %s", $1, $3);
                 $$ = str;
             }
             | expression OR expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s || %s", $1, $3);
                 $$ = str;
             }
             | expression NAND expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s !& %s", $1, $3);
                 $$ = str;
             }
             | expression NOR expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s !| %s", $1, $3);
                 $$ = str;
             }
             | expression XOR expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s ^| %s", $1, $3);
                 $$ = str;
             }
             | expression XNOR expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s ^& %s", $1, $3);
                 $$ = str;
             }
@@ -737,49 +757,60 @@ expression  : IDENTIFIER
             }
             | expression '?' expression ':' expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s ? %s : %s", $1, $3, $5);
                 $$ = str;
             }
             | expression '[' expression ']'
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s[%s]", $1, $3);
                 $$ = str;
             }
             | expression '[' expression ':' expression ']'
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "%s[%s:%s]", $1, $3, $5);
                 $$ = str;
             }
-            | POSEDGE IDENTIFIER
+            | POSEDGE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "posedge %s", $2);
                 $$ = str;
             }
-            | NEGEDGE IDENTIFIER
+            | NEGEDGE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "negedge %s", $2);
                 $$ = str;
             }
-            | NEGEDGE IDENTIFIER OR_WORD POSEDGE IDENTIFIER
+            | NEGEDGE expression OR_WORD POSEDGE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "negedge %s or posedge %s", $2, $5);
                 $$ = str;
             }
-            | POSEDGE IDENTIFIER OR_WORD NEGEDGE IDENTIFIER
+            | POSEDGE expression OR_WORD NEGEDGE expression
             {
-                char *str = (char *)malloc(sizeof(char) * 32);
+                char *str = (char *)malloc(sizeof(char) * 64);
                 sprintf(str, "posedge %s or negedge %s", $2, $5);
                 $$ = str;
             }
-
+            | '{' expression '}'
+            {
+                char *str = (char *)malloc(sizeof(char) * 64);
+                sprintf(str, "{%s}", $2);
+                $$ = str;
+            }
+            | expression ',' expression
+            {
+                char *str = (char *)malloc(sizeof(char) * 64);
+                sprintf(str, "%s , %s", $1, $3);
+                $$ = str;
+            }
+            
 %%
-
 
 void yyerror(const char *msg)
 {

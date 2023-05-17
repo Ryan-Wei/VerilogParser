@@ -37,7 +37,10 @@ reg[31:0]       operandB_inner;//内部操作数B√
 reg[5:0]        counter;//√
 reg[1:0]        opcode_inner;//内部操作码，实现加减以及加0√
 
-integer     add=3'b000,sub=3'b001,mul=3'b010,div=3'b011;
+integer     add=3'b000;
+integer     sub=3'b001;
+integer     mul=3'b010;
+integer     div=3'b011;
 
 
 always @ (add_x,add_y,cin) //add_result cout
@@ -216,28 +219,27 @@ end
 
 always @ (opcode_inner, operandB_inner)//控制加法器
 begin
-    case (opcode_inner)
-        2'b00:
-        begin
-            add_y=32'b0;
-            cin=0;
-        end
-        2'b01:
-        begin
-            add_y=operandB_inner;
-            cin=0;
-        end
-        2'b11:
-        begin 
-            add_y=~operandB_inner;
-            cin=1;
-        end
-        default:
-        begin
-            add_y=32'b0;
-            cin=1;
-        end
-    endcase
+    if (opcode_inner==2'b00)
+    begin
+        add_y=32'b0;
+        cin=0;
+    end
+    else if (opcode_inner==2'b01)
+    begin
+        add_y=operandB_inner;
+        cin=0;
+    end
+    else if (opcode_inner==2'b11)
+    begin 
+        add_y=~operandB_inner;
+        cin=1;
+    end
+    else
+    begin
+        add_y=32'b0;
+        cin=1;
+    end
 end
+
 
 endmodule
